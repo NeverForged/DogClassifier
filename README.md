@@ -24,13 +24,13 @@ A number of models were tried to classify dog breeds based on photos; see [ipyth
 
 First I tried a fully connected network with no hidden layers with the following structure:
 
-![Fully Connected Network With No Hidden Layers](WebImages\fully_connected.png)
+![Fully Connected Network With No Hidden Layers](Source\WebImages\fully_connected.png)
 
 This was usually not better than chance; it was around 60% when comparing Beagles to Great Danes, but when running five dog breeds, it was about 25% accurate.
 
 Using a single hidden layer as such:
 
-![Single Hidden Layer](WebImages/single_layer.png)
+![Single Hidden Layer](Source/WebImages/single_layer.png)
 
 Where N is some number of hidden features, and searching over N as 1-10 times the number of breeds (so 5, 10, ..., 45, 50), I found that it was sometimes worse, sometimes better, but never better than around 40%, which is not an ideal classifier.
 
@@ -38,6 +38,6 @@ To be honest, I wasn't convinced the above would work in the first place, especi
 
 Now to create a convoluted neural network.  Setting it up to use variables, so I can reconstruct it as a class (using sklearn methods) and grid search it to find the best parameters for the situation.
 
-![Convolutional Neural Network](WebImages/fully_connected_cnn.png)
+![Convolutional Neural Network](Source/WebImages/fully_connected_cnn.png)
 
 Of course, now I have to grid-search the variables.
