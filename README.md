@@ -24,7 +24,7 @@ A number of models were tried to classify dog breeds based on photos; see [ipyth
 
 First I tried a fully connected network with no hidden layers with the following structure:
 
-![Fully Connected Network With No Hidden Layers](Source\WebImages\fully_connected.png)
+![Fully Connected Network With No Hidden Layers](Source/WebImages/fully_connected.png)
 
 This was usually not better than chance; it was around 60% when comparing Beagles to Great Danes, but when running five dog breeds, it was about 25% accurate.
 
