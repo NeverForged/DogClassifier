@@ -1,6 +1,7 @@
 import tensorflow as tf
+from sklearn.base import BaseEstimator, ClassifierMixin
 
-class ImageClassifier(object):
+class ImageClassifier(BaseEstimator, ClassifierMixin):
     """Image Classifier.
     Uses a fairly standard Convoluted Neural Netwrok architecture to
     classify some number of objects.
@@ -56,7 +57,7 @@ class ImageClassifier(object):
 
     """
 
-    def __init__(self, picsize, classes, convolution_size=5, runs=100,
+    def __init__(self, picsize=32, classes=[0, 1], convolution_size=5, runs=100,
                  out_channels=24, out_channels_2=48, accuracy_thresh=0.5,
                  hidden_units=512, regularization_strength=1.0, slides=50,
                  learning_rate=0.001, pool_size=2, accuracy_counter=5,
@@ -79,20 +80,33 @@ class ImageClassifier(object):
         self.pool_size = pool_size
         self.accuracy_counter=5
         self.verbose = verbose
+        self.W1 = W1
+        self.b1 = b1
+        self.W2 = W2
+        self.b2 = b2
+        self.Wf = Wf
+        self.Wf2 = Wf2
+        self.bf = bf
+        self.bf2 = bf2
 
+    def MakeCNN(self):
+        '''
+        Make the actual CNN...
+        '''
         # ---------- Convolutional layer 1 ----------
         # third number = channels, so 3
         try:
-            self.W1 = tf.constant(W1)
+            self.W1 = tf.constant(self.W1)
         except:
-            self.W1 = tf.Variable(tf.truncated_normal(shape=[self.convolution_size,
-                                                             self.convolution_size,
-                                                             3, out_channels],
+            self.W1 = tf.Variable(tf.truncated_normal(
+                                        shape=[self.convolution_size,
+                                               self.convolution_size, 3,
+                                               self.out_channels],
                                                       stddev=0.1), name='W1')
         try:
-            self.b1 = tf.constant(b1)
+            self.b1 = tf.constant(self.b1)
         except:
-            self.b1 = tf.Variable(tf.constant(0.1, shape=[out_channels]),
+            self.b1 = tf.Variable(tf.constant(0.1, shape=[self.out_channels]),
                                   name='b1')
 
         # Tensors representing our input dataset and our input labels
@@ -132,7 +146,7 @@ class ImageClassifier(object):
 
         # ---------- Convolutional layer  2 ----------
         try:
-            self.W2 = tf.constant(W2)
+            self.W2 = tf.constant(self.W2)
         except:
             self.W2 = tf.Variable(tf.truncated_normal(shape=[
                                                          self.convolution_size,
@@ -141,7 +155,7 @@ class ImageClassifier(object):
                                                          self.out_channels_2],
                                                   stddev=0.1), name='w2')
         try:
-            self.b2 = tf.constant(b2)
+            self.b2 = tf.constant(self.b2)
         except:
             self.b2 = tf.Variable(tf.constant(0.1, shape=[self.out_channels_2]))
 
@@ -163,15 +177,16 @@ class ImageClassifier(object):
 
         # ---------- Fully Connected layer ----------
         try:
-            self.Wf = tf.constant(W2)
+            self.Wf = tf.constant(self.Wf)
         except:
             self.Wf = (tf.Variable(
                        tf.truncated_normal(shape=[int(self.picsize**2 *
-                                                   1/16 * self.out_channels_2),
+                                                   1/(self.pool_size**4) *
+                                                   self.out_channels_2),
                                                    self.hidden_units],
                                                    stddev=0.01)))
         try:
-            self.bf = tf.constant(bf)
+            self.bf = tf.constant(self.bf)
         except:
             self.bf = tf.Variable(tf.constant(0.1, shape=[self.hidden_units]))
 
@@ -181,7 +196,7 @@ class ImageClassifier(object):
         self.layer_2_out_flat = tf.reshape(
                                     self.layer_2_out, [-1,
                                                        int(self.picsize**2 *
-                                                       1/16 *
+                                                       1/(self.pool_size**4) *
                                                        self.out_channels_2)])
 
         self.fully_connected_1_out = tf.nn.relu(tf.matmul(self.layer_2_out_flat,
@@ -190,13 +205,13 @@ class ImageClassifier(object):
 
         # ---------- The Output Layer ----------
         try:
-            self.Wf2 = tf.constant(Wf2)
+            self.Wf2 = tf.constant(self.Wf2)
         except:
             self.Wf2 = tf.Variable(tf.truncated_normal(shape=[self.hidden_units,
                                                           len(self.classes)],
                                                           stddev=0.01))
         try:
-            self.bf2 = tf.constant(bf2)
+            self.bf2 = tf.constant(self.bf2)
         except:
             self.bf2 = tf.Variable(tf.constant(0.1, shape=[len(self.classes)]))
 
@@ -254,6 +269,7 @@ class ImageClassifier(object):
         ----------
         train_accuracies: A list of train accuracies at each 'epoch'.
         '''
+        self.MakeCNN()
         self.train_accuracies = []
         training_epochs = int((X.shape[0])/self.slides)
         if self.verbose==True:
@@ -283,6 +299,7 @@ class ImageClassifier(object):
                 print('\rPercent Complete: {:.1f}% - Train Accuracy: {:.1f}%'
                       .format(100.0*float((i+1)/training_epochs),
                               100*self.train_accuracies[-1]), end='')
+        return self
 
     def score(self, X, y):
         '''
@@ -294,17 +311,16 @@ class ImageClassifier(object):
         -----------
 
         '''
-        return (self.accuracy
-                .eval(feed_dict={self.x:X, self.y:y}))
+        return (self.accuracy.eval(feed_dict={self.x:X, self.y:y}))
 
-    def predict(self, X):
+    def predict(self, X, y=None):
         '''
         Returns a prediction based on X
         '''
         return (tf.argmax(self.fully_connected_2_out, 1)
                 .eval(feed_dict = {self.x:X}))
 
-    def predict_proba(self, X):
+    def predict_proba(self, X, y=None):
         '''
         Returns a probability prediction based on X (log-odds)
         '''
