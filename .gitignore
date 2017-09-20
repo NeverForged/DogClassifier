@@ -1,4 +1,1 @@
 $ cat .gitignore
-/images
-/Images
-*.jpg
