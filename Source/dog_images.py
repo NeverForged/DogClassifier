@@ -35,9 +35,9 @@ class DogImages(object):
             img.paste(dimg, offset)
             img.save(directory + '/image{}.png'.format(self.imageid))
             self.imageid += 1
-            # img = ImageOps.mirror(img)
-            # img.save(directory + '/image{}.png'.format(self.imageid))
-            # self.imageid += 1
+            img = ImageOps.mirror(img)
+            img.save(directory + '/image{}.png'.format(self.imageid))
+            self.imageid += 1
 
     def _make_imgs(self, directory):
         '''
