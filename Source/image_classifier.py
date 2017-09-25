@@ -13,19 +13,16 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
     classes:  List of class names for your classes
     convolution_size: (= 5 by default) The size of the convolutions, all
               convolutions are convolution_size by convolution_size.
-    runs:     (= 100 by default) How many times it runs before giving up,
-              higher is better.
+    epochs:   (= 100 by default) How many times it runs thru the entire dataset
     out_channels: (= 24 by default) The number of Output channels in the
               first convolution.
     out_channels_2: (= 48 by default) The number of Output channels in the
               second convolution.
-    accuracy_thresh: (= 0.5 by default) the difference in threshold required
-              before it stops running that batch.
     hidden_units: (= 512 by default) Number of hidden features between the
               convolutions and the output
     regularization_strength: (= 1.0 by default) The factor used in
               regularization step (see tf.nn.l2_loss)
-    slides: (= 50 by default) Number of pictures used in each training step.
+    batch_size: (= 50 by default) Number of pictures used in each training step.
     learning_rate (= 0.001 by default) The starting learning rate of the Atom
               Optimizer, see tf.train.AdamOptimizer() for details.
     pool_size: (= 2 by default) The size of the pools.
@@ -57,28 +54,26 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
 
     """
 
-    def __init__(self, picsize=32, classes=[0, 1], convolution_size=5, runs=100,
-                 out_channels=24, out_channels_2=48, accuracy_thresh=0.5,
-                 hidden_units=512, regularization_strength=1.0, slides=50,
-                 learning_rate=0.001, pool_size=2, accuracy_counter=5,
-                 verbose=False, W1=None, b1=None, W2=None, b2=None, Wf=None,
-                 bf=None, Wf2=None, bf2=None):
+    def __init__(self, picsize=32, classes=[0, 1], convolution_size=5,
+                 epochs=100, out_channels=24, out_channels_2=48,
+                 hidden_units=512, regularization_strength=1.0, batch_size=50,
+                 learning_rate=0.001, pool_size=2, verbose=False, W1=None,
+                 b1=None, W2=None, b2=None, Wf=None, bf=None, Wf2=None,
+                 bf2=None):
         '''
         Initializer.
         '''
         self.picsize = picsize
         self.classes = classes
         self.convolution_size = convolution_size
-        self.runs = runs
+        self.training_epocs = epochs
         self.out_channels = out_channels
         self.out_channels_2 = out_channels_2
-        self.accuracy_thresh=accuracy_thresh
         self.hidden_units = hidden_units
         self.regularization_strength = regularization_strength
         self.slides = slides
         self.learning_rate = learning_rate
         self.pool_size = pool_size
-        self.accuracy_counter=5
         self.verbose = verbose
         self.W1 = W1
         self.b1 = b1
@@ -271,33 +266,40 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         self.MakeCNN()
         self.train_accuracies = []
-        training_epochs = int((X.shape[0])/self.slides)
+        batch_steps = int((X.shape[0])/self.slides)
         if self.verbose==True:
             print('{} Slides per epoch for {} training epochs'
                    .format(self.slides, training_epochs))
             print('\rPercent Complete: {:.2f}% - Accuracy: {:.2f}%'
                   .format(0, 0), end='')
         slides = self.slides
-        for i in range(training_epochs):
-            # while i <= training_epochs and not math.isnan(last_accuracy):
-            xbatch = X[i*slides:i*slides + slides - 1]
-            ybatch = y[i*slides:i*slides + slides - 1]
-            steps = 0
-            train_accuracy = 0.0
-            dif = 10*self.accuracy_thresh
-            while dif > self.accuracy_thresh or steps <= self.runs:
-                old = train_accuracy
-                self.train_step.run(feed_dict={self.x: xbatch, self.y: ybatch})
-                train_accuracy = self.accuracy.eval(feed_dict={self.x:xbatch,
-                                                               self.y: ybatch})
-                dif = train_accuracy - old
-                steps += 1
-
+        for j in range(self.training_epochs):
+            lst_acc = []
+            # shuffle data to build slides...
+            Xhold = X.copy()
+            Yhold = y.copy()
+            new = np.array([i for i in range(Xhold.shape[0])])
+            np.random.shuffle(new)
+            for i, n in enumerate(new):
+                X[i, :] = Xhold[n, :]
+                y[i, :] = Yhold[n, :]
+            # run thru the entire training set...
+            for i in range(batch_steps):
+                # make sure we have enough slides for a full batch
+                if i*slides + slides - 1 <= X.shape[0]:
+                    xbatch = X[i*slides:i*slides + slides - 1]
+                    ybatch = y[i*slides:i*slides + slides - 1]
+                    self.train_step.run(feed_dict={self.x: xbatch,
+                                                   self.y: ybatch})
+                    train_accuracy = self.accuracy.eval(feed_dict=
+                                                            {self.x:xbatch,
+                                                             self.y: ybatch})
+                    lst_acc.append(train_accuracy)
             # Print out diagnostics
-            self.train_accuracies.append(train_accuracy)
+            self.train_accuracies.append(np.mean(train_accuracy))
             if self.verbose == True:
                 print('\rPercent Complete: {:.1f}% - Train Accuracy: {:.1f}%'
-                      .format(100.0*float((i+1)/training_epochs),
+                      .format(100.0*float((j+1)/self.training_epochs),
                               100*self.train_accuracies[-1]), end='')
         return self
 
@@ -318,7 +320,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         Returns a prediction based on X
         '''
         return (tf.argmax(self.fully_connected_2_out, 1)
-                .eval(feed_dict = {self.x:X}))
+                    .eval(feed_dict = {self.x:X}))
 
     def predict_proba(self, X, y=None):
         '''
