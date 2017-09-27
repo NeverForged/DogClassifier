@@ -331,9 +331,8 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                                                         {self.x:xbatch,
                                                          self.y: ybatch})
                 lst_acc.append(train_accuracy)
-                loss = self.total_loss.eval(.eval(feed_dict=
-                                                        {self.x:xbatch,
-                                                         self.y: ybatch}))
+                loss = self.total_loss.eval(feed_dict = {self.x:xbatch,
+                                                         self.y: ybatch})
                 loss_temp.append(loss)
             # update
             j += 1
@@ -388,3 +387,6 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         Returns a probability prediction based on X (log-odds)
         '''
         return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
+
+if __name__ == '__main__':
+    new = ImageClassifier()
