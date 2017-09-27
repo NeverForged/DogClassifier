@@ -343,14 +343,14 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
             self.val_accuracies.append(acc)
             if acc >= self.best_val_acc_:
                 self.best_val_acc_
-                self.W1_best = W1.eval()
-                self.b1_best = b1.eval()
-                self.W2_best = W2.eval()
-                self.b2_best = b2.eval()
-                self.Wf_best = Wf.eval()
-                self.bf_best = bf.eval()
-                self.Wf2_best = Wf2.eval()
-                self.bf2_best = bf2.eval()
+                self.W1_best = self.W1.eval()
+                self.b1_best = self.b1.eval()
+                self.W2_best = self.W2.eval()
+                self.b2_best = self.b2.eval()
+                self.Wf_best = self.Wf.eval()
+                self.bf_best = self.bf.eval()
+                self.Wf2_best = self.Wf2.eval()
+                self.bf2_best = self.bf2.eval()
             dif = slef.loss_function[-1] - old
             old = slef.loss_function[-1]
             if self.verbose == True:
