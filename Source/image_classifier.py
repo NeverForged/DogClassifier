@@ -18,16 +18,22 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
               first convolution.
     out_channels_2: (= 48 by default) The number of Output channels in the
               second convolution.
+    init:     (= 'he' by default) This is the initializer, either 'he' for He
+              initialization (sqrt(2/N)) or 'x' for Xavier (sqrt(1/N)).  Can
+              also be a number, such as '2.0' for He or '1.0' for Xavier
     hidden_units: (= 512 by default) Number of hidden features between the
               convolutions and the output
     regularization_strength: (= 1.0 by default) The factor used in
               regularization step (see tf.nn.l2_loss)
-    batch_size: (= 50 by default) Number of pictures used in each training step.
+    batch_size: (= 100 by default) Number of images used in each training step.
     learning_rate (= 0.001 by default) The starting learning rate of the Atom
               Optimizer, see tf.train.AdamOptimizer() for details.
     pool_size: (= 2 by default) The size of the pools.
     verbose: (= False by default) Set to true to get an update on percentage
              done and training Accuracy.
+    loss_threshold: (= 0.001 by default) An Early Stop parameter, determines
+              the minimum difference between loss reads before the epochs kick
+              out early.
 
     Attributes
     ----------
@@ -55,11 +61,11 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def __init__(self, picsize=32, classes=[0, 1], convolution_size=5,
-                 epochs=100, out_channels=24, out_channels_2=48,
-                 hidden_units=512, regularization_strength=1.0, batch_size=50,
+                 epochs=100, out_channels=24, out_channels_2=48, init='he'
+                 hidden_units=512, regularization_strength=1.0, batch_size=100,
                  learning_rate=0.001, pool_size=2, verbose=False, W1=None,
                  b1=None, W2=None, b2=None, Wf=None, bf=None, Wf2=None,
-                 bf2=None):
+                 bf2=None, loss_threshold=0.001):
         '''
         Initializer.
         '''
@@ -83,25 +89,36 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.Wf2 = Wf2
         self.bf = bf
         self.bf2 = bf2
+        if init == 'he':
+            self.init_factor = 2.0
+        elif init == 'x':
+            self.init_factor = 1.0
+        else:
+            try:
+                self.init_factor = float(init)
+            except:
+                self.init_factor = 2.0
+        self.loss_threshold = loss_threshold
 
     def MakeCNN(self):
         '''
         Make the actual CNN...
         '''
+        self.initializer = tf.contrib.layers.variance_scaling_initializer(
+                            factor=self.init_factor)
         # ---------- Convolutional layer 1 ----------
         # third number = channels, so 3
         try:
             self.W1 = tf.constant(self.W1)
         except:
-            self.W1 = tf.Variable(tf.truncated_normal(
-                                        shape=[self.convolution_size,
-                                               self.convolution_size, 3,
-                                               self.out_channels],
-                                                      stddev=0.1), name='W1')
+            self.W1 = tf.Variable(self.initializer([self.convolution_size,
+                                                    self.convolution_size, 3,
+                                                    self.out_channels]),
+                                  name='W1')
         try:
             self.b1 = tf.constant(self.b1)
         except:
-            self.b1 = tf.Variable(tf.constant(0.1, shape=[self.out_channels]),
+            self.b1 = tf.Variable(self.initializer([self.out_channels]),
                                   name='b1')
 
         # Tensors representing our input dataset and our input labels
@@ -143,16 +160,16 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         try:
             self.W2 = tf.constant(self.W2)
         except:
-            self.W2 = tf.Variable(tf.truncated_normal(shape=[
-                                                         self.convolution_size,
-                                                         self.convolution_size,
-                                                         self.out_channels,
-                                                         self.out_channels_2],
-                                                  stddev=0.1), name='w2')
+            self.W2 = tf.Variable(self.initializer([self.convolution_size,
+                                                    self.convolution_size,
+                                                    self.out_channels,
+                                                    self.out_channels_2]),
+                                                    name='w2')
         try:
             self.b2 = tf.constant(self.b2)
         except:
-            self.b2 = tf.Variable(tf.constant(0.1, shape=[self.out_channels_2]))
+            self.b2 = tf.Variable(self.initializer([self.out_channels_2]),
+                                  name='b2')
 
         # now the convolution... on layer_1_out
         self.conv2 = tf.nn.conv2d(self.layer_1_out, self.W2,
@@ -174,16 +191,17 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         try:
             self.Wf = tf.constant(self.Wf)
         except:
-            self.Wf = (tf.Variable(
-                       tf.truncated_normal(shape=[int(self.picsize**2 *
+            self.Wf = tf.Variable(self.initializer([int(self.picsize**2 *
                                                    1/(self.pool_size**4) *
                                                    self.out_channels_2),
-                                                   self.hidden_units],
-                                                   stddev=0.01)))
+                                                   self.hidden_units]),
+                                                   name = 'Wf')
+
         try:
             self.bf = tf.constant(self.bf)
         except:
-            self.bf = tf.Variable(tf.constant(0.1, shape=[self.hidden_units]))
+            self.bf = tf.Variable(self.initializer([self.hidden_units]),
+                                  name = 'bf')
 
         # Flatten the output of the second layer.  This allows us to do
         # a simple matrix multiplication with the weight matrix for the
@@ -202,13 +220,14 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         try:
             self.Wf2 = tf.constant(self.Wf2)
         except:
-            self.Wf2 = tf.Variable(tf.truncated_normal(shape=[self.hidden_units,
-                                                          len(self.classes)],
-                                                          stddev=0.01))
+            self.Wf2 = tf.Variable(self.initializer([self.hidden_units,
+                                                     len(self.classes)]),
+                                                    name = 'Wf2')
         try:
             self.bf2 = tf.constant(self.bf2)
         except:
-            self.bf2 = tf.Variable(tf.constant(0.1, shape=[len(self.classes)]))
+            self.bf2 = tf.Variable(self.initializer([len(self.classes)]),
+                                   name = 'bf2')
 
         # Predictions, but on a log-odds scale.
         self.fully_connected_2_out = tf.matmul(self.fully_connected_1_out,
@@ -266,14 +285,31 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         self.MakeCNN()
         self.train_accuracies = []
+        self.loss_function = []
+        self.val_accuracies = []
         batch_steps = int((X.shape[0])/self.slides)
+
+        # validation set...
+        extra = X.shape[0] - self.slides*batch_steps
+        batch_steps = batch_steps - 2
+        Xval = X[:2*self.slides + extra]
+        X = X[2*self.slides + extra:]
+        yval = y[:2*self.slides + extra]
+        y = y[2*self.slides + extra:]
+
         if self.verbose==True:
             print('{} Slides per epoch for {} training epochs'
                    .format(self.slides, training_epochs))
             print('\rPercent Complete: {:.2f}% - Accuracy: {:.2f}%'
                   .format(0, 0), end='')
+
         slides = self.slides
-        for j in range(self.training_epochs):
+        j = 0
+        old = -9000
+        dif = 90001 # it's over 9000!
+        self.best_val_acc_ = 0.0
+
+        while j <= self.training_epochs and abs(dif) > self.loss_threshold:
             lst_acc = []
             # shuffle data to build slides...
             Xhold = X.copy()
@@ -284,23 +320,48 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 X[i, :] = Xhold[n, :]
                 y[i, :] = Yhold[n, :]
             # run thru the entire training set...
+            loss_temp = []
             for i in range(batch_steps):
                 # make sure we have enough slides for a full batch
-                if i*slides + slides - 1 <= X.shape[0]:
-                    xbatch = X[i*slides:i*slides + slides - 1]
-                    ybatch = y[i*slides:i*slides + slides - 1]
-                    self.train_step.run(feed_dict={self.x: xbatch,
-                                                   self.y: ybatch})
-                    train_accuracy = self.accuracy.eval(feed_dict=
-                                                            {self.x:xbatch,
-                                                             self.y: ybatch})
-                    lst_acc.append(train_accuracy)
+                xbatch = X[i*slides:i*slides + slides - 1]
+                ybatch = y[i*slides:i*slides + slides - 1]
+                self.train_step.run(feed_dict={self.x: xbatch,
+                                               self.y: ybatch})
+                train_accuracy = self.accuracy.eval(feed_dict=
+                                                        {self.x:xbatch,
+                                                         self.y: ybatch})
+                lst_acc.append(train_accuracy)
+                loss = self.total_loss.eval(.eval(feed_dict=
+                                                        {self.x:xbatch,
+                                                         self.y: ybatch}))
+                loss_temp.append(loss)
+            # update
+            j += 1
             # Print out diagnostics
             self.train_accuracies.append(np.mean(train_accuracy))
+            self.loss_function.append(np.mean(loss_temp))
+            acc = self.accuracy.eval(feed_dict= {self.x:Xval, self.y:yval})
+            self.val_accuracies.append(acc)
+            if acc >= self.best_val_acc_:
+                self.best_val_acc_
+                self.W1_best = W1.eval()
+                self.b1_best = b1.eval()
+                self.W2_best = W2.eval()
+                self.b2_best = b2.eval()
+                self.Wf_best = Wf.eval()
+                self.bf_best = bf.eval()
+                self.Wf2_best = Wf2.eval()
+                self.bf2_best = bf2.eval()
+            dif = slef.loss_function[-1] - old
+            old = slef.loss_function[-1]
             if self.verbose == True:
                 print('\rPercent Complete: {:.1f}% - Train Accuracy: {:.1f}%'
-                      .format(100.0*float((j+1)/self.training_epochs),
-                              100*self.train_accuracies[-1]), end='')
+                      .format(100.0*float(j/self.training_epochs),
+                              100*self.train_accuracies[-1]) +
+                      'Validation Accuracy: {:.1f}% - Loss Function = {:.4f}'
+                      .format(self.val_accuracies[-1] * 100,
+                              self.loss_function[-1]),
+                       end='')
         return self
 
     def score(self, X, y):
