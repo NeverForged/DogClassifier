@@ -61,7 +61,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def __init__(self, picsize=32, classes=[0, 1], convolution_size=5,
-                 epochs=100, out_channels=24, out_channels_2=48, init='he'
+                 epochs=100, out_channels=24, out_channels_2=48, init='he',
                  hidden_units=512, regularization_strength=1.0, batch_size=100,
                  learning_rate=0.001, pool_size=2, verbose=False, W1=None,
                  b1=None, W2=None, b2=None, Wf=None, bf=None, Wf2=None,
