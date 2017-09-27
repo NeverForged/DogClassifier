@@ -73,7 +73,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.picsize = picsize
         self.classes = classes
         self.convolution_size = convolution_size
-        self.training_epocs = epochs
+        self.training_epochs = epochs
         self.out_channels = out_channels
         self.out_channels_2 = out_channels_2
         self.hidden_units = hidden_units
@@ -299,8 +299,6 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         y = y[2*self.slides + extra:]
 
         if self.verbose==True:
-            print('{} Slides per epoch for {} training epochs'
-                   .format(self.slides, self.training_epochs))
             print('\rPercent Complete: {:.2f}% - Accuracy: {:.2f}%'
                   .format(0, 0), end='')
 
