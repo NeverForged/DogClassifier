@@ -351,8 +351,8 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 self.bf_best = self.bf.eval()
                 self.Wf2_best = self.Wf2.eval()
                 self.bf2_best = self.bf2.eval()
-            dif = slef.loss_function[-1] - old
-            old = slef.loss_function[-1]
+            dif = self.loss_function[-1] - old
+            old = self.loss_function[-1]
             if self.verbose == True:
                 print('\rPercent Complete: {:.1f}% - Train Accuracy: {:.1f}%'
                       .format(100.0*float(j/self.training_epochs),
