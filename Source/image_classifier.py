@@ -288,7 +288,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.loss_function = []
         self.val_accuracies = []
         batch_steps = int((X.shape[0])/self.slides)
-
+        slides = self.slides
         # validation set...
         extra = X.shape[0] - self.slides*batch_steps
         batch_steps = batch_steps - 2
@@ -303,7 +303,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
             print('\rPercent Complete: {:.2f}% - Accuracy: {:.2f}%'
                   .format(0, 0), end='')
 
-        slides = self.slides
+
         j = 0
         old = -9000
         dif = 90001 # it's over 9000!
