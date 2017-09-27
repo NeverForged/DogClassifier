@@ -389,4 +389,17 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
 
 if __name__ == '__main__':
-    new = ImageClassifier()
+    picsize = 100
+    lst_dogs=['a', 'b']
+    for i in range(5):
+        model = ImageClassifier(picsize, lst_dogs,
+                                 out_channels = 24,
+                                 out_channels_2 = 48,
+                                 hidden_units = 100,
+                                 regularization_strength = 0.01,
+                                 batch_size = 64,
+                                 learning_rate = 0.1,
+                                 convolution_size = 5,
+                                 pool_size = 2,
+                                 epochs = 50,
+                                 verbose=True)
