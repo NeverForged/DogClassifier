@@ -373,30 +373,23 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         -----------
 
         '''
-        try
-            acc = self.accuracy.eval(feed_dict={self.x:X, self.y:y})
-        except
-            acc = 'Error'
-        return (acc)
+        return self.accuracy.eval(feed_dict={self.x:X, self.y:y})
+
 
     def predict(self, X, y=None):
         '''
         Returns a prediction based on X
         '''
-        try:
-            return (tf.argmax(self.fully_connected_2_out, 1)
+        return (tf.argmax(self.fully_connected_2_out, 1)
                         .eval(feed_dict = {self.x:X}))
-        except:
-            return 'error'
+
 
     def predict_proba(self, X, y=None):
         '''
         Returns a probability prediction based on X (log-odds)
         '''
-        try:
-            return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
-        except:
-            return 'error'
+        return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
+
 
 if __name__ == '__main__':
     picsize = 100
