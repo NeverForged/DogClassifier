@@ -1,6 +1,7 @@
 import tensorflow as tf
 from sklearn.base import BaseEstimator, ClassifierMixin
 
+
 class ImageClassifier(BaseEstimator, ClassifierMixin):
     """Image Classifier.
     Uses a fairly standard Convoluted Neural Netwrok architecture to
@@ -299,7 +300,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
 
         if self.verbose==True:
             print('{} Slides per epoch for {} training epochs'
-                   .format(self.slides, training_epochs))
+                   .format(self.slides, self.training_epochs))
             print('\rPercent Complete: {:.2f}% - Accuracy: {:.2f}%'
                   .format(0, 0), end='')
 
