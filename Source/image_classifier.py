@@ -77,7 +77,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.out_channels_2 = out_channels_2
         self.hidden_units = hidden_units
         self.regularization_strength = regularization_strength
-        self.slides = slides
+        self.slides = batch_size
         self.learning_rate = learning_rate
         self.pool_size = pool_size
         self.verbose = verbose
