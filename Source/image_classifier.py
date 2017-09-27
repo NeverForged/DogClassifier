@@ -361,6 +361,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                       .format(self.val_accuracies[-1] * 100,
                               self.loss_function[-1]),
                        end='')
+        self.loss_function = self.loss_function/np.max(self.loss_function)
         return self
 
     def score(self, X, y):
@@ -375,7 +376,6 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         return self.accuracy.eval(feed_dict={self.x:X, self.y:y})
 
-
     def predict(self, X, y=None):
         '''
         Returns a prediction based on X
@@ -383,13 +383,26 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         return (tf.argmax(self.fully_connected_2_out, 1)
                         .eval(feed_dict = {self.x:X}))
 
-
     def predict_proba(self, X, y=None):
         '''
         Returns a probability prediction based on X (log-odds)
         '''
         return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
 
+    def plot_learning(self):
+        plt.plot(list(range(len(self.loss_function))),
+                 self.loss_function, color='y', label='Loss/Max Loss')
+        plt.plot(list(range(len(self.train_accuracies))),
+                 1/len(self.classes), linestyle='-', label='chance')
+        plt.plot(list(range(len(self.train_accuracies))),
+                 self.train_accuracies, color='r', label='Training')
+        plt.plot(list(range(len(self.val_accuracies))),
+                 self.val_accuracies, color='b', label='Validation')
+        plt.ylabel('Probability')
+        plt.xlabel('Epochs')
+        plt.title('Accuracy & Loss')
+        plt.legend()
+        return plt
 
 if __name__ == '__main__':
     picsize = 100
