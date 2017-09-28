@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+import matplotlib.pyplot as plt
 from sklearn.base import BaseEstimator, ClassifierMixin
 
 
@@ -357,7 +358,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 print('\rPercent Complete: {:.1f}% - Train Accuracy: {:.1f}% '
                       .format(100.0*float(j/self.training_epochs),
                               100*self.train_accuracies[-1]) +
-                      'Validation Accuracy: {:.1f}% - Loss Function = {:.4f}'
+                      '- Validation Accuracy: {:.1f}% - Loss Function = {:.4f}'
                       .format(self.val_accuracies[-1] * 100,
                               self.loss_function[-1]),
                        end='')
@@ -416,6 +417,6 @@ if __name__ == '__main__':
                              learning_rate = 0.1,
                              convolution_size = 5,
                              pool_size = 2,
-                             epochs = 50,
+                             epochs = 5,
                              verbose=True)
     print('okay')
