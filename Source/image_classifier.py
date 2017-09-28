@@ -340,6 +340,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
             # Print out diagnostics
             self.train_accuracies.append(np.mean(train_accuracy))
             self.loss_function.append(np.mean(loss_temp))
+            loss_temp = []
             acc = self.accuracy.eval(feed_dict= {self.x:Xval, self.y:yval})
             self.val_accuracies.append(acc)
             if acc >= self.best_val_acc_:
@@ -362,7 +363,16 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                       .format(self.val_accuracies[-1] * 100,
                               self.loss_function[-1]),
                        end='')
+        # fix loss function...
         self.loss_function = self.loss_function/np.max(self.loss_function)
+        self.sess.run(tf.assign(self.W1, self.W1_best))
+        self.sess.run(tf.assign(self.W2, self.W2_best))
+        self.sess.run(tf.assign(self.Wf, self.Wf_best))
+        self.sess.run(tf.assign(self.Wf2, self.Wf2_best))
+        self.sess.run(tf.assign(self.Wb, self.b1_best))
+        self.sess.run(tf.assign(self.b2, self.b2_best))
+        self.sess.run(tf.assign(self.bf, self.bf_best))
+        self.sess.run(tf.assign(self.bf2, self.bf2_best))
         return self
 
     def score(self, X, y):
@@ -375,6 +385,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         -----------
 
         '''
+
         return self.accuracy.eval(feed_dict={self.x:X, self.y:y})
 
     def predict(self, X, y=None):
