@@ -369,7 +369,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.sess.run(tf.assign(self.W2, self.W2_best))
         self.sess.run(tf.assign(self.Wf, self.Wf_best))
         self.sess.run(tf.assign(self.Wf2, self.Wf2_best))
-        self.sess.run(tf.assign(self.Wb, self.b1_best))
+        self.sess.run(tf.assign(self.b1, self.b1_best))
         self.sess.run(tf.assign(self.b2, self.b2_best))
         self.sess.run(tf.assign(self.bf, self.bf_best))
         self.sess.run(tf.assign(self.bf2, self.bf2_best))
