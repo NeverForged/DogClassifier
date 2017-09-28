@@ -394,7 +394,8 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         plt.plot(list(range(len(self.loss_function))),
                  self.loss_function, color='y', label='Loss/Max Loss')
         plt.plot(list(range(len(self.train_accuracies))),
-                 1/len(self.classes), linestyle='-', label='chance')
+                 (1/len(self.classes))*np.ones(len(self.train_accuracies)),
+                 linestyle='-', label='chance')
         plt.plot(list(range(len(self.train_accuracies))),
                  self.train_accuracies, color='r', label='Training')
         plt.plot(list(range(len(self.val_accuracies))),
