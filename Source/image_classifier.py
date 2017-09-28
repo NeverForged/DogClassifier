@@ -364,6 +364,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                               self.loss_function[-1]),
                        end='')
         # fix loss function...
+        print(np.max(self.loss_function), np.mean(self.loss_function))
         self.loss_function = self.loss_function/np.max(self.loss_function)
         self.sess.run(tf.assign(self.W1, self.W1_best))
         self.sess.run(tf.assign(self.W2, self.W2_best))
