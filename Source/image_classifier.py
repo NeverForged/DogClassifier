@@ -364,8 +364,8 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                               self.loss_function[-1]),
                        end='')
         # fix loss function...
-        print(np.max(self.loss_function), np.mean(self.loss_function))
-        self.loss_function = self.loss_function/np.max(self.loss_function)
+
+        self.loss_function = self.loss_function/np.max(self.loss_function[1:])
         self.sess.run(tf.assign(self.W1, self.W1_best))
         self.sess.run(tf.assign(self.W2, self.W2_best))
         self.sess.run(tf.assign(self.Wf, self.Wf_best))
@@ -415,6 +415,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         plt.ylabel('Probability')
         plt.xlabel('Epochs')
         plt.title('Accuracy & Loss')
+        plt.y_lim(ymax=1)
         plt.legend()
         return plt
 
