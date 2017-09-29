@@ -416,6 +416,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         plt.xlabel('Epochs')
         plt.title('Accuracy & Loss')
         plt.ylim(ymax=1)
+        plt.ylim(ymin=0)
         plt.legend()
         return plt
 
