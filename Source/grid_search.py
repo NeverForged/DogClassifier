@@ -43,14 +43,14 @@ def main():
     # Step 4: Grid Search...
     params = {'picsize':[picsize],
               'classes':[lst_dogs],
-              'out_channels' = [75, 150, 225, 300, 375]
-              'out_channels_2' = [150, 300, 450, 600]
-              'hidden_units' = [150, 225, 300, 375]
-              'regularization_strength' = [0.0, 0.1, 0.25, 0.5, 0.75, 1.0],
-              'batch_size' = [32, 64, 96, 100, 150, 200],
-              'learning_rate' = [0.00001, 0.0001, 0.001, 0.01],
-              'loss_threshold' = [0.5],
-              'verbose'=[True]}
+              'out_channels':[75, 150, 225, 300, 375],
+              'out_channels_2':[150, 300, 450, 600],
+              'hidden_units':[150, 225, 300, 375],
+              'regularization_strength':[0.0, 0.1, 0.25, 0.5, 0.75, 1.0],
+              'batch_size':[32, 64, 96, 100, 150, 200],
+              'learning_rate':[0.00001, 0.0001, 0.001, 0.01],
+              'loss_threshold':[0.5],
+              'verbose':[True]}
 
     gs = GridSearchCV(ImageClassifier(), params)
     gs.fit(Xtrain, Ytrain)
