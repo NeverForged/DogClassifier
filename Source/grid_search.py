@@ -8,6 +8,7 @@ from image_classifier import ImageClassifier
 from sklearn.model_selection import GridSearchCV
 
 def main():
+    picsize = 200
     # Step 1: Get List of Dogs
     lst = [x[0] for x in os.walk('../Images')]
     lst_dogs = [a.replace('../Images\\', '') for a in lst[1:]]
@@ -59,5 +60,4 @@ def main():
     print('Best Params: {}'.format(gs.best_params_))
 
 if __name__ == '__main__':
-    params =
-    main(params)
+    main()
