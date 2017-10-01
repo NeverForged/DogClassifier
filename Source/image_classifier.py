@@ -290,7 +290,11 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.train_accuracies = []
         self.loss_function = []
         self.val_accuracies = []
-        batch_steps = int((X.shape[0])/self.slides)
+        try:
+            batch_steps = int((X.shape[0])/self.slides)
+        except:
+            self.slides = 100
+            batch_steps = int((X.shape[0])/self.slides)
         slides = self.slides
         # validation set...
         extra = X.shape[0] - self.slides*batch_steps
