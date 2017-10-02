@@ -11,7 +11,7 @@ def main():
     picsize = 200
     # Step 1: Get List of Dogs
     lst = [x[0] for x in os.walk('../Images')]
-    lst_dogs = [a.replace('../Images\\', '') for a in lst[1:]]
+    lst_dogs = [a.replace('../Images/', '') for a in lst[1:]]
     print(lst_dogs)
 
     # Step 2: Make the Images...
