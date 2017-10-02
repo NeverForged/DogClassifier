@@ -422,6 +422,16 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
 
+    def set_params(self, **parameters):
+        '''
+        Fix as per:
+        https://stackoverflow.com/questions/28124366/
+        can-gridsearchcv-be-used-with-a-custom-classifier
+        '''
+      for parameter, value in parameters.items():
+        setattr(self, parameter, value)
+      return self
+
     # def plot_learning(self):
     #     plt.plot(list(range(len(self.loss_function))),
     #              self.loss_function, color='y', label='Loss/Max Loss')
