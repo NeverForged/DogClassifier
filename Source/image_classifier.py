@@ -303,7 +303,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         X = X[2*self.slides + extra:]
         yval = y[:2*self.slides + extra]
         y = y[2*self.slides + extra:]
-
+        print(type(self.training_epochs), type(self.loss_threshold))
         if self.verbose==True:
             print('\rPercent Complete: {:.2f}% - Accuracy: {:.2f}%'
                   .format(0, 0), end='')
