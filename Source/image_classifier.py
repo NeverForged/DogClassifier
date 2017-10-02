@@ -314,7 +314,8 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         dif = 90001 # it's over 9000!
         self.best_val_acc_ = 0.0
 
-        while j <= self.training_epochs and abs(dif) > self.loss_threshold:
+        while (int(j) <= int(self.training_epochs) and
+               float(abs(dif)) > float(self.loss_threshold)):
             lst_acc = []
             # shuffle data to build slides...
             Xhold = X.copy()
