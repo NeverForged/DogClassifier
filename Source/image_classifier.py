@@ -72,17 +72,17 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         Initializer.
         '''
-        self.picsize = picsize
+        self.picsize = int(picsize)
         self.classes = classes
-        self.convolution_size = convolution_size
-        self.training_epochs = epochs
-        self.out_channels = out_channels
-        self.out_channels_2 = out_channels_2
-        self.hidden_units = hidden_units
-        self.regularization_strength = regularization_strength
-        self.slides = batch_size
-        self.learning_rate = learning_rate
-        self.pool_size = pool_size
+        self.convolution_size = int(convolution_size)
+        self.training_epochs = int(epochs)
+        self.out_channels = int(out_channels)
+        self.out_channels_2 = int(out_channels_2)
+        self.hidden_units = int(hidden_units)
+        self.regularization_strength = float(regularization_strength)
+        self.slides = int(batch_size)
+        self.learning_rate = float(learning_rate)
+        self.pool_size = int(pool_size)
         self.verbose = verbose
         self.W1 = W1
         self.b1 = b1
@@ -101,7 +101,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 self.init_factor = float(init)
             except:
                 self.init_factor = 2.0
-        self.loss_threshold = loss_threshold
+        self.loss_threshold = float(loss_threshold)
 
     def MakeCNN(self):
         '''
