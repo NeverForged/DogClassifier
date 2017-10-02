@@ -80,7 +80,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.out_channels_2 = int(out_channels_2)
         self.hidden_units = int(hidden_units)
         self.regularization_strength = float(regularization_strength)
-        self.slides = int(batch_size)
+        self.slides = batch_size
         self.learning_rate = float(learning_rate)
         self.pool_size = int(pool_size)
         self.verbose = verbose
