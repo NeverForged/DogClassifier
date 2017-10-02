@@ -76,6 +76,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.classes = classes
         self.convolution_size = int(convolution_size)
         self.training_epochs = epochs
+        print('self.training_epochs = {} : {}'.format(self.training_epochs, epochs))
         self.out_channels = int(out_channels)
         self.out_channels_2 = int(out_channels_2)
         self.hidden_units = int(hidden_units)
@@ -344,9 +345,9 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 loss_temp.append(loss)
                 # make sure it's working...
                 if self.verbose == True:
+                    calc = ((i + j*batch_steps)/
+                             (self.training_epochs*batch_steps))
                     if len(self.loss_function) >= 1:
-                        calc = ((i + j*batch_steps)/
-                                 (self.training_epochs*batch_steps))
                         print('\rPercent Complete: {:.1f}% - '.format(calc) +
                               'Train Accuracy: {:.1f}% '
                               .format(100*self.train_accuracies[-1]) +
