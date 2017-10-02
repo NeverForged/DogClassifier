@@ -429,9 +429,9 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         https://stackoverflow.com/questions/28124366/
         can-gridsearchcv-be-used-with-a-custom-classifier
         '''
-      for parameter, value in parameters.items():
-        setattr(self, parameter, value)
-      return self
+        for parameter, value in parameters.items():
+            setattr(self, parameter, value)
+        return self
 
     # def plot_learning(self):
     #     plt.plot(list(range(len(self.loss_function))),
