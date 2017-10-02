@@ -75,7 +75,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.picsize = int(picsize)
         self.classes = classes
         self.convolution_size = int(convolution_size)
-        self.training_epochs = int(epochs)
+        self.training_epochs = epochs
         self.out_channels = int(out_channels)
         self.out_channels_2 = int(out_channels_2)
         self.hidden_units = int(hidden_units)
