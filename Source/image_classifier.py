@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from sklearn.base import BaseEstimator, ClassifierMixin
 
 
@@ -339,6 +339,22 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 loss = self.total_loss.eval(feed_dict = {self.x:xbatch,
                                                          self.y: ybatch})
                 loss_temp.append(loss)
+                # make sure it's working...
+                if self.verbose == True:
+                    if len(self.loss_function) >= 1:
+                        calc = ()(i + j*batch_steps)/
+                                 (self.training_epochs*batch_steps))
+                        print('\rPercent Complete: {:.1f}% - '.format(calc) +
+                              'Train Accuracy: {:.1f}% '
+                              .format(100*self.train_accuracies[-1]) +
+                              '- Validation Accuracy: {:.1f}% - '
+                              .format(self.val_accuracies[-1] * 100) +
+                              'Loss Function: {:.4f}'
+                              .format(self.loss_function[-1]), end='')
+                    else:
+                        print('\rPercent Complete: {:.1f}% - '.format(calc) +
+                              'Train Accuracy: --.- - Validation Accuracy: ' +
+                              '--.- - Loss Function: ----.----', end='')
             # update
             j += 1
             # Print out diagnostics
@@ -363,7 +379,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 print('\rPercent Complete: {:.1f}% - Train Accuracy: {:.1f}% '
                       .format(100.0*float(j/self.training_epochs),
                               100*self.train_accuracies[-1]) +
-                      '- Validation Accuracy: {:.1f}% - Loss Function = {:.4f}'
+                      '- Validation Accuracy: {:.1f}% - Loss Function: {:.4f}'
                       .format(self.val_accuracies[-1] * 100,
                               self.loss_function[-1]),
                        end='')
@@ -406,23 +422,23 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
 
-    def plot_learning(self):
-        plt.plot(list(range(len(self.loss_function))),
-                 self.loss_function, color='y', label='Loss/Max Loss')
-        plt.plot(list(range(len(self.train_accuracies))),
-                 (1/len(self.classes))*np.ones(len(self.train_accuracies)),
-                 linestyle='-', label='chance')
-        plt.plot(list(range(len(self.train_accuracies))),
-                 self.train_accuracies, color='r', label='Training')
-        plt.plot(list(range(len(self.val_accuracies))),
-                 self.val_accuracies, color='b', label='Validation')
-        plt.ylabel('Probability')
-        plt.xlabel('Epochs')
-        plt.title('Accuracy & Loss')
-        plt.ylim(ymax=1)
-        plt.ylim(ymin=0)
-        plt.legend()
-        return plt
+    # def plot_learning(self):
+    #     plt.plot(list(range(len(self.loss_function))),
+    #              self.loss_function, color='y', label='Loss/Max Loss')
+    #     plt.plot(list(range(len(self.train_accuracies))),
+    #              (1/len(self.classes))*np.ones(len(self.train_accuracies)),
+    #              linestyle='-', label='chance')
+    #     plt.plot(list(range(len(self.train_accuracies))),
+    #              self.train_accuracies, color='r', label='Training')
+    #     plt.plot(list(range(len(self.val_accuracies))),
+    #              self.val_accuracies, color='b', label='Validation')
+    #     plt.ylabel('Probability')
+    #     plt.xlabel('Epochs')
+    #     plt.title('Accuracy & Loss')
+    #     plt.ylim(ymax=1)
+    #     plt.ylim(ymin=0)
+    #     plt.legend()
+    #     return plt
 
 if __name__ == '__main__':
     picsize = 100
