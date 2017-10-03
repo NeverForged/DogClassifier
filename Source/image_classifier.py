@@ -64,8 +64,9 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def __init__(self, picsize=32, classes=[0, 1], convolution_size=5,
-                 epochs=100, out_channels=24, out_channels_2=48, init='he',
-                 hidden_units=512, regularization_strength=1.0, batch_size=100,
+                 training_epochs=int(100), out_channels=24, out_channels_2=48,
+                 init='he',
+                 hidden_units=512, regularization_strength=1.0, batch_size=99,
                  learning_rate=0.001, pool_size=2, verbose=False, W1=None,
                  b1=None, W2=None, b2=None, Wf=None, bf=None, Wf2=None,
                  bf2=None, loss_threshold=0.001):
@@ -75,14 +76,14 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.picsize = int(picsize)
         self.classes = classes
         self.convolution_size = int(convolution_size)
-        self.training_epochs = epochs
+        self.training_epochs = int(training_epochs)
         print('self.training_epochs = {} : {}'
-              .format(self.training_epochs, epochs))
+              .format(self.training_epochs, training_epochs))
         self.out_channels = int(out_channels)
         self.out_channels_2 = int(out_channels_2)
         self.hidden_units = int(hidden_units)
         self.regularization_strength = float(regularization_strength)
-        self.slides = batch_size
+        self.batch_size = batch_size
         self.learning_rate = float(learning_rate)
         self.pool_size = int(pool_size)
         self.verbose = verbose
@@ -295,18 +296,18 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.loss_function = []
         self.val_accuracies = []
         try:
-            batch_steps = int((X.shape[0])/self.slides)
+            batch_steps = int((X.shape[0])/self.batch_size)
         except:
-            self.slides = 100
-            batch_steps = int((X.shape[0])/self.slides)
-        slides = self.slides
+            self.batch_size = 100
+            batch_steps = int((X.shape[0])/self.batch_size)
+        slides = self.batch_size
         # validation set...
-        extra = X.shape[0] - self.slides*batch_steps
+        extra = X.shape[0] - self.batch_size*batch_steps
         batch_steps = batch_steps - 2
-        Xval = X[:2*self.slides + extra]
-        X = X[2*self.slides + extra:]
-        yval = y[:2*self.slides + extra]
-        y = y[2*self.slides + extra:]
+        Xval = X[:2*self.batch_size + extra]
+        X = X[2*self.batch_size + extra:]
+        yval = y[:2*self.batch_size + extra]
+        y = y[2*self.batch_size + extra:]
         print(type(self.training_epochs), type(self.loss_threshold))
         if self.verbose==True:
             print('\rPercent Complete: {:.2f}% - Accuracy: {:.2f}%'
