@@ -77,8 +77,6 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.classes = classes
         self.convolution_size = int(convolution_size)
         self.training_epochs = int(training_epochs)
-        print('self.training_epochs = {} : {}'
-              .format(self.training_epochs, training_epochs))
         self.out_channels = int(out_channels)
         self.out_channels_2 = int(out_channels_2)
         self.hidden_units = int(hidden_units)
@@ -295,24 +293,19 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.train_accuracies = []
         self.loss_function = []
         self.val_accuracies = []
-        try:
-            batch_steps = int((X.shape[0])/self.batch_size)
-        except:
-            self.batch_size = 100
-            batch_steps = int((X.shape[0])/self.batch_size)
-        slides = self.batch_size
-        # validation set...
+
+        # validation set is roughly 20% of data, plus a little to avoid
+        # sparse batches
+        batch_steps = int((X.shape[0]*0.8)/self.batch_size)
         extra = X.shape[0] - self.batch_size*batch_steps
-        batch_steps = batch_steps - 2
-        Xval = X[:2*self.batch_size + extra]
-        X = X[2*self.batch_size + extra:]
-        yval = y[:2*self.batch_size + extra]
-        y = y[2*self.batch_size + extra:]
+        Xval = X[:extra]
+        X = X[extra:]
+        yval = y[:extra]
+        y = y[extra:]
         print(type(self.training_epochs), type(self.loss_threshold))
         if self.verbose==True:
             print('\rPercent Complete: {:.2f}% - Accuracy: {:.2f}%'
                   .format(0, 0), end='')
-
 
         j = 0
         old = -9000
