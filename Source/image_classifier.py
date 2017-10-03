@@ -348,7 +348,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 calc = ((i + j*batch_steps)/
                          (self.training_epochs*batch_steps))
                 if len(self.loss_function) >= 1:
-                    print('\rPercent Complete: {:.1f}% - '.format(calc) +
+                    print('\rPercent Complete: {:.3f}% - '.format(calc) +
                           'Train Accuracy: {:.1f}% '
                           .format(100*self.train_accuracies[-1]) +
                           '- Validation Accuracy: {:.1f}% - '
@@ -356,7 +356,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                           'Loss Function: {:.4f}'
                           .format(self.loss_function[-1]), end='')
                 else:
-                    print('\rPercent Complete: {:.1f}% - '.format(calc) +
+                    print('\rPercent Complete: {:.3f}% - '.format(calc) +
                           'Train Accuracy: --.- - Validation Accuracy: ' +
                           '--.- - Loss Function: ----.----', end='')
             # update
