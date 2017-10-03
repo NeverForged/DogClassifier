@@ -8,7 +8,7 @@ from image_classifier import ImageClassifier
 from sklearn.model_selection import GridSearchCV
 
 def main():
-    picsize = 200
+    picsize = 128
     # Step 1: Get List of Dogs
     lst = [x[0] for x in os.walk('../Images')]
     lst_dogs = [a.replace('../Images/', '') for a in lst[1:]]
@@ -16,7 +16,7 @@ def main():
 
     # Step 2: Make the Images...
     dog_images = DogImages(lst_dogs, picsize)
-    dog_images.generate_img_files()
+    # dog_images.generate_img_files()
     train_imgs = dog_images.load_images('train')
     test_imgs = dog_images.load_images('test')
     Xtest = test_imgs[0]
@@ -53,7 +53,7 @@ def main():
               'loss_threshold':[0.5],
               'verbose':[True]}
 
-    gs = GridSearchCV(ImageClassifier(), params)
+    gs = GridSearchCV(ImageClassifier(), params, verbose=1)
     gs.fit(Xtrain, Ytrain)
     print()
     print('Best Accuracy: {:.3f}'.format(gs.best_score_))
