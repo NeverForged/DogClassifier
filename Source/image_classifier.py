@@ -308,12 +308,12 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         j = 0
         old = -9000
         dif = 90001 # it's over 9000!
-        self.best_val_acc_ = 0.0
+        self.best_val_acc_ = 0.
 
         while (int(j) <= int(self.training_epochs) and
                float(abs(dif)) > float(self.loss_threshold)):
             lst_acc = []
-            # shuffle data to build slides...
+            # shuffle data to build self.batch_size...
             Xhold = X.copy()
             Yhold = y.copy()
             new = np.array([i for i in range(Xhold.shape[0])])
@@ -324,9 +324,11 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
             # run thru the entire training set...
             loss_temp = []
             for i in range(batch_steps):
-                # make sure we have enough slides for a full batch
-                xbatch = X[i*slides:i*slides + slides - 1]
-                ybatch = y[i*slides:i*slides + slides - 1]
+                # make sure we have enough self.batch_size for a full batch
+                xbatch = X[i*self.batch_size:
+                           i*self.batch_size + self.batch_size - 1]
+                ybatch = y[i*self.batch_size:
+                           i*self.batch_size + self.batch_size - 1]
                 self.train_step.run(feed_dict={self.x: xbatch,
                                                self.y: ybatch})
                 train_accuracy = self.accuracy.eval(feed_dict=
