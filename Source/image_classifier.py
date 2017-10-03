@@ -300,7 +300,6 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         X = X[extra:]
         yval = y[:extra]
         y = y[extra:]
-        print(type(self.training_epochs), type(self.loss_threshold))
         if self.verbose==True:
             print('\rPercent Complete: {:.2f}% - Accuracy: {:.2f}%'
                   .format(0, 0), end='')
@@ -459,6 +458,6 @@ if __name__ == '__main__':
                              learning_rate = 0.1,
                              convolution_size = 5,
                              pool_size = 2,
-                             epochs = 5,
+                             training_epochs = 5,
                              verbose=True)
     print('okay')
