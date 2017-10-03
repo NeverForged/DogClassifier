@@ -288,6 +288,8 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         ----------
         train_accuracies: A list of train accuracies at each 'epoch'.
         '''
+        print()
+        print('epochs = {}'.format(self.training_epochs))
         self.MakeCNN()
         self.train_accuracies = []
         self.loss_function = []
