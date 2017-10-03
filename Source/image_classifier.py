@@ -75,8 +75,9 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.picsize = int(picsize)
         self.classes = classes
         self.convolution_size = int(convolution_size)
-        self.training_epochs = epochs
-        print('self.training_epochs = {} : {}'.format(self.training_epochs, epochs))
+        self.training_epochs = int(epochs)
+        print('self.training_epochs = {} : {}'
+              .format(self.training_epochs, epochs))
         self.out_channels = int(out_channels)
         self.out_channels_2 = int(out_channels_2)
         self.hidden_units = int(hidden_units)
@@ -103,8 +104,6 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
             except:
                 self.init_factor = 2.0
         self.loss_threshold = float(loss_threshold)
-        if type(self.training_epochs) != int:
-            self.training_epochs = int(300)
 
     def MakeCNN(self):
         '''
@@ -344,21 +343,21 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                                                          self.y: ybatch})
                 loss_temp.append(loss)
                 # make sure it's working...
-                # if self.verbose == True:
-                calc = ((i + j*batch_steps)/
-                         (self.training_epochs*batch_steps))
-                if len(self.loss_function) >= 1:
-                    print('\rPercent Complete: {:.3f}% - '.format(calc) +
-                          'Train Accuracy: {:.1f}% '
-                          .format(100*self.train_accuracies[-1]) +
-                          '- Validation Accuracy: {:.1f}% - '
-                          .format(self.val_accuracies[-1] * 100) +
-                          'Loss Function: {:.4f}'
-                          .format(self.loss_function[-1]), end='')
-                else:
-                    print('\rPercent Complete: {:.3f}% - '.format(calc) +
-                          'Train Accuracy: --.- - Validation Accuracy: ' +
-                          '--.- - Loss Function: ----.----', end='')
+                if self.verbose == True:
+                    calc = ((i + j*batch_steps)/
+                             (self.training_epochs*batch_steps))
+                    if len(self.loss_function) >= 1:
+                        print('\rPercent Complete: {:.4f}% - '.format(calc) +
+                              'Train Accuracy: {:.1f}% '
+                              .format(100*self.train_accuracies[-1]) +
+                              '- Validation Accuracy: {:.1f}% - '
+                              .format(self.val_accuracies[-1] * 100) +
+                              'Loss Function: {:.4f}'
+                              .format(self.loss_function[-1]), end='')
+                    else:
+                        print('\rPercent Complete: {:.4f}% - '.format(calc) +
+                              'Train Accuracy: --.- - Validation Accuracy: ' +
+                              '--.- - Loss Function: ----.----', end='')
             # update
             j += 1
             # Print out diagnostics
@@ -379,16 +378,15 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 self.bf2_best = self.bf2.eval()
             dif = self.loss_function[-1] - old
             old = self.loss_function[-1]
-            # if self.verbose == True:
-            print('\rPercent Complete: {:.1f}% - Train Accuracy: {:.1f}% '
-                  .format(100.0*float(j/self.training_epochs),
-                          100*self.train_accuracies[-1]) +
-                  '- Validation Accuracy: {:.1f}% - Loss Function: {:.4f}'
-                  .format(self.val_accuracies[-1] * 100,
-                          self.loss_function[-1]),
-                   end='')
+            if self.verbose == True:
+                print('\rPercent Complete: {:.4f}% - Train Accuracy: {:.1f}% '
+                      .format(100.0*float(j/self.training_epochs),
+                              100*self.train_accuracies[-1]) +
+                      '- Validation Accuracy: {:.1f}% - Loss Function: {:.4f}'
+                      .format(self.val_accuracies[-1] * 100,
+                              self.loss_function[-1]),
+                       end='')
         # fix loss function...
-
         self.loss_function = self.loss_function/np.max(self.loss_function[1:])
         self.sess.run(tf.assign(self.W1, self.W1_best))
         self.sess.run(tf.assign(self.W2, self.W2_best))
@@ -410,7 +408,6 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         -----------
 
         '''
-
         return self.accuracy.eval(feed_dict={self.x:X, self.y:y})
 
     def predict(self, X, y=None):
