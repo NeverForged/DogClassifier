@@ -41,19 +41,20 @@ def main():
         Xtest[i, :] = Xhold[n, :]
         Ytest[i, :] = Yhold[n, :]
 
+    lst_a = [5, 10, 20, 40, 80]
     # Step 4: Grid Search...
     params = {'picsize':[picsize],
               'classes':[lst_dogs],
-              'out_channels':[75, 150, 225, 300, 375],
-              'out_channels_2':[150, 300, 450, 600],
-              'hidden_units':[150, 225, 300, 375],
-              'regularization_strength':[0.0, 0.1, 0.25, 0.5, 0.75, 1.0],
-              'batch_size':[32, 64, 96, 100, 150, 200],
-              'learning_rate':[0.00001, 0.0001, 0.001, 0.01],
-              'loss_threshold':[0.5],
+              'out_channels':lst_a,
+              'out_channels_2':lst_a,
+              'hidden_units':lst_a,
+              'regularization_strength':[0.01, 0.1, 1.0],
+              'batch_size':[32, 64, len(lst_dogs), 2*len(lst_dogs)],
+              'learning_rate':[0.0001, 0.001, 0.01],
+              'loss_threshold':[1.0],
               'verbose':[True]}
 
-    gs = GridSearchCV(ImageClassifier(), params, verbose=1)
+    gs = GridSearchCV(ImageClassifier(), params, verbose=10)
     gs.fit(Xtrain, Ytrain)
     print()
     print('Best Accuracy: {:.3f}'.format(gs.best_score_))
