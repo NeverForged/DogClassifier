@@ -16,7 +16,7 @@ def main():
 
     # Step 2: Make the Images...
     dog_images = DogImages(lst_dogs, picsize)
-    # dog_images.generate_img_files()
+    dog_images.generate_img_files()
     train_imgs = dog_images.load_images('train')
     test_imgs = dog_images.load_images('test')
     Xtest = test_imgs[0]
