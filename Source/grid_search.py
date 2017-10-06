@@ -16,7 +16,7 @@ def main():
 
     # Step 2: Make the Images...
     dog_images = DogImages(lst_dogs, picsize)
-    dog_images.generate_img_files()
+    # dog_images.generate_img_files()
     train_imgs = dog_images.load_images('train')
     test_imgs = dog_images.load_images('test')
     Xtest = test_imgs[0]
@@ -51,7 +51,7 @@ def main():
               'regularization_strength':[0.01, 0.1, 1.0],
               'batch_size':[32, 64, len(lst_dogs), 2*len(lst_dogs)],
               'learning_rate':[0.0001, 0.001, 0.01],
-              'loss_threshold':[1.0],
+              'loss_threshold':[10.0],
               'verbose':[True]}
 
     gs = GridSearchCV(ImageClassifier(), params, verbose=10)
