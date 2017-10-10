@@ -37,6 +37,8 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
     loss_threshold: (= 0.001 by default) An Early Stop parameter, determines
               the minimum difference between loss reads before the epochs kick
               out early.
+    grid_search: (=False by default) set True to close the session as soon as
+              a score is generated.
 
     Attributes
     ----------
@@ -65,8 +67,8 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
 
     def __init__(self, picsize=32, classes=[0, 1], convolution_size=5,
                  training_epochs=int(100), out_channels=24, out_channels_2=48,
-                 init='he',
-                 hidden_units=512, regularization_strength=1.0, batch_size=99,
+                 init='he', grid_search=False, hidden_units=512,
+                 regularization_strength=1.0, batch_size=99,
                  learning_rate=0.001, pool_size=2, verbose=False, W1=None,
                  b1=None, W2=None, b2=None, Wf=None, bf=None, Wf2=None,
                  bf2=None, loss_threshold=0.001):
@@ -85,6 +87,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.learning_rate = float(learning_rate)
         self.pool_size = int(pool_size)
         self.verbose = verbose
+        self.grid_search = grid_search
         self.W1 = W1
         self.b1 = b1
         self.W2 = W2
@@ -301,8 +304,9 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         yval = y[:extra]
         y = y[extra:]
         if self.verbose==True:
-            print('\rPercent Complete: {:.2f}% - Accuracy: {:.2f}%'
-                  .format(0, 0), end='')
+            print('\rPercent Complete: --.----% - ' +
+                  'Train Accuracy: --.--- - Validation Accuracy: ' +
+                  '--.--- - Loss Function: ----.----', end='')
 
         j = 0
         old = -9000
@@ -342,16 +346,16 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                     calc = 100.0*(j + (i/batch_steps))/self.training_epochs
                     if len(self.loss_function) >= 1:
                         print('\rPercent Complete: {:.4f}% - '.format(calc) +
-                              'Train Accuracy: {:.1f}% '
+                              'Train Accuracy: {:.3f}% '
                               .format(100*self.train_accuracies[-1]) +
-                              '- Validation Accuracy: {:.1f}% - '
+                              '- Validation Accuracy: {:.3f}% - '
                               .format(self.val_accuracies[-1] * 100) +
                               'Loss Function: {:.4f}'
                               .format(self.loss_function[-1]), end='')
                     else:
                         print('\rPercent Complete: {:.4f}% - '.format(calc) +
-                              'Train Accuracy: --.- - Validation Accuracy: ' +
-                              '--.- - Loss Function: ----.----', end='')
+                              'Train Accuracy: --.--- - Validation Accuracy: ' +
+                              '--.--- - Loss Function: ----.----', end='')
             # update
             j += 1
             # Print out diagnostics
@@ -373,10 +377,10 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
             dif = self.loss_function[-1] - old
             old = self.loss_function[-1]
             if self.verbose == True:
-                print('\rPercent Complete: {:.4f}% - Train Accuracy: {:.1f}% '
+                print('\rPercent Complete: {:.4f}% - Train Accuracy: {:.3f}% '
                       .format(100.0*float(j/self.training_epochs),
                               100*self.train_accuracies[-1]) +
-                      '- Validation Accuracy: {:.1f}% - Loss Function: {:.4f}'
+                      '- Validation Accuracy: {:.3f}% - Loss Function: {:.4f}'
                       .format(self.val_accuracies[-1] * 100,
                               self.loss_function[-1]),
                        end='')
@@ -402,7 +406,10 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         -----------
 
         '''
-        return self.accuracy.eval(feed_dict={self.x:X, self.y:y})
+        score = self.accuracy.eval(feed_dict={self.x:X, self.y:y})
+        if self.grid_search:
+            self.sess.close()
+        return score
 
     def predict(self, X, y=None):
         '''
