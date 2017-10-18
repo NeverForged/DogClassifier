@@ -313,7 +313,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         dif = 90001 # it's over 9000!
         self.best_val_acc_ = 0.
 
-        while (int(j) <= int(self.training_epochs) and
+        while (int(j) < int(self.training_epochs) and
                float(abs(dif)) > float(self.loss_threshold)):
             lst_acc = []
             # shuffle data to build self.batch_size...
