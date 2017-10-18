@@ -329,9 +329,9 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
             for i in range(batch_steps):
                 # make sure we have enough self.batch_size for a full batch
                 xbatch = X[i*self.batch_size:
-                           i*self.batch_size + self.batch_size - 1]
+                           i*self.batch_size + self.batch_size - 1, :]
                 ybatch = y[i*self.batch_size:
-                           i*self.batch_size + self.batch_size - 1]
+                           i*self.batch_size + self.batch_size - 1, :]
                 self.train_step.run(feed_dict={self.x: xbatch,
                                                self.y: ybatch})
                 train_accuracy = self.accuracy.eval(feed_dict=
