@@ -343,7 +343,8 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 loss_temp.append(loss)
                 # make sure it's working...
                 if self.verbose == True:
-                    calc = 100.0*(j + (i/batch_steps))/self.training_epochs
+                    calc = (100.0*((j*self.training_epochs + i + 1)/
+                            (self.training_epochs*batch_steps)))
                     if len(self.loss_function) >= 1:
                         print('\rPercent Complete: {:.4f}% - '.format(calc) +
                               'Train Accuracy: {:.3f}% '
