@@ -52,7 +52,8 @@ def main():
               'batch_size':[32, 64, len(lst_dogs), 2*len(lst_dogs)],
               'learning_rate':[0.0001, 0.001, 0.01],
               'loss_threshold':[10.0],
-              'verbose':[True]}
+              'verbose':[True],
+	      'grid_search':[True]}
 
     gs = GridSearchCV(ImageClassifier(), params, verbose=10)
     gs.fit(Xtrain, Ytrain)
