@@ -379,7 +379,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
             old = self.loss_function[-1]
             if self.verbose == True:
                 print('\rPercent Complete: {:.4f}% - Train Accuracy: {:.3f}% '
-                      .format(calc) +
+                      .format(calc, 100*self.train_accuracies[-1]) +
                       '- Validation Accuracy: {:.3f}% - Loss Function: {:.4f}'
                       .format(self.val_accuracies[-1] * 100,
                               self.loss_function[-1]),
