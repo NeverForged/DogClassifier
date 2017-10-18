@@ -244,7 +244,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         # ---------- Training & Loss Function ----------
         # The basic loss function, cross entropy.
         self.cross_entropy = tf.reduce_mean(
-                                tf.nn.sparse_softmax_cross_entropy_with_logits(
+                                tf.nn.softmax_cross_entropy_with_logits(
                                     labels=self.y,
                                     logits=self.fully_connected_2_out))
 
