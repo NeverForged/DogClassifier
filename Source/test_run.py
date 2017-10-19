@@ -48,7 +48,7 @@ def main():
 
     lst_dogs_1 = [lst_dogs[N], 'None']
 
-    model = ImageClassifier(picsize, lst_dogs,
+    model = ImageClassifier(picsize, lst_dogs_1,
                                  out_channels = 12,
                                  out_channels_2 = 24,
                                  hidden_units = 50,
