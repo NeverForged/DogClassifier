@@ -72,14 +72,14 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                  regularization_strength=1.0, batch_size=99,
                  learning_rate=0.001, pool_size=2, verbose=False, W1=None,
                  b1=None, W2=None, b2=None, Wf=None, bf=None, Wf2=None,
-                 bf2=None, loss_threshold=0.001,
-                 save_file='../models/model.pickle'):
+                 bf2=None, loss_threshold=0.001, load_file=None
+                 save_file=None):
         '''
         Initializer.
         '''
         self.save_file = save_file
         try:
-            d = pickle.load(open(save_file, "rb"))
+            d = pickle.load(open(load_file, "rb"))
             self.picsize = d['picsize']
             self.classes = d['classes']
             self.convolution_size = int(d['convolution_size'])
