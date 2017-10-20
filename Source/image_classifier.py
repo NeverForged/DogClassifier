@@ -466,7 +466,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
 
-    def save_(self):
+    def save_(self, save_file='models/model.pickle'):
         '''
         Saves all the relevant things in a pickle file for later retrieval.
 
