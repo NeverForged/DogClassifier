@@ -91,14 +91,14 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
             self.pool_size = int(d['pool_size'])
             self.verbose = d['verbose']
             self.grid_search = d['grid_search']
-            self.W1 = d['W1']
-            self.b1 = d['b1']
-            self.W2 = d['W2']
-            self.b2 = d['b2']
-            self.Wf = d['Wf']
-            self.Wf2 = d['Wf2']
-            self.bf = d['bf']
-            self.bf2 = d['bf2']
+            self.W1_best = d['W1_best']
+            self.b1_best = d['b1_best']
+            self.W2_best = d['W2_best']
+            self.b2_best = d['b2_best']
+            self.Wf_best = d['Wf_best']
+            self.Wf2_best = d['Wf2_best']
+            self.bf_best = d['bf_best']
+            self.bf2_best = d['bf2_best']
             self.init_factor = d['init_factor']
             self.loss_threshold = float(d['loss_threshold'])
             self.train_accuracies = d['train_accuracies']
@@ -429,6 +429,17 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.sess.run(tf.assign(self.bf2, self.bf2_best))
         return self
 
+    def reset_(self):
+        self.MakeCNN()
+        self.sess.run(tf.assign(self.W1, self.W1_best))
+        self.sess.run(tf.assign(self.W2, self.W2_best))
+        self.sess.run(tf.assign(self.Wf, self.Wf_best))
+        self.sess.run(tf.assign(self.Wf2, self.Wf2_best))
+        self.sess.run(tf.assign(self.b1, self.b1_best))
+        self.sess.run(tf.assign(self.b2, self.b2_best))
+        self.sess.run(tf.assign(self.bf, self.bf_best))
+        self.sess.run(tf.assign(self.bf2, self.bf2_best))
+
     def score(self, X, y):
         '''
         Returns mean accuracy of predicting x given y.
@@ -439,22 +450,18 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         -----------
 
         '''
-        try:
-            score = self.accuracy.eval(feed_dict={self.x:X, self.y:y})
-            if self.grid_search:
-                self.sess.close()
-            return score
-        except:
-            self.MakeCNN(False)
-            score = self.accuracy.eval(feed_dict={self.x:X, self.y:y})
-            if self.grid_search:
-                self.sess.close()
-            return score
+        self.reset_()
+        score = self.accuracy.eval(feed_dict={self.x:X, self.y:y})
+        if self.grid_search:
+            self.sess.close()
+        return score
+
 
     def predict(self, X, y=None):
         '''
         Returns a prediction based on X
         '''
+        self.reset_()
         return (tf.argmax(self.fully_connected_2_out, 1)
                         .eval(feed_dict = {self.x:X}))
 
@@ -462,6 +469,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         Returns a probability prediction based on X (log-odds)
         '''
+        self.reset_()
         return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
 
     def save_(self, save_file='models/model.pickle'):
@@ -486,14 +494,14 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         d['pool_size'] = self.pool_size
         d['verbose'] = self.verbose
         d['grid_search'] = False
-        d['W1'] = self.W1_best
-        d['b1'] = self.b1_best
-        d['W2'] = self.W2_best
-        d['b2'] = self.b2_best
-        d['Wf'] = self.Wf_best
-        d['Wf2'] = self.Wf2_best
-        d['bf'] = self.bf_best
-        d['bf2'] = self.bf2_best
+        d['W1_best'] = self.W1_best
+        d['b1_best'] = self.b1_best
+        d['W2_best'] = self.W2_best
+        d['b2_best'] = self.b2_best
+        d['Wf_best'] = self.Wf_best
+        d['Wf2_best'] = self.Wf2_best
+        d['bf_best'] = self.bf_best
+        d['bf2_best'] = self.bf2_best
         d['init_factor'] = self.init_factor
         d['loss_threshold'] = self.loss_threshold
         d['train_accuracies'] = self.train_accuracies
