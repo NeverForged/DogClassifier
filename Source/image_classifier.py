@@ -197,7 +197,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
 
         # ---------- Convolutional layer  2 ----------
         try:
-            self.W2 = tf.constant(self.W2)
+            self.W2 = tf.Variable(self.W2)
         except:
             self.W2 = tf.Variable(self.initializer([self.convolution_size,
                                                     self.convolution_size,
