@@ -139,7 +139,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                     self.init_factor = 2.0
             self.loss_threshold = float(loss_threshold)
 
-    def MakeCNN(self, fitting_this=True):
+    def MakeCNN(self, fitting_this=False):
         '''
         Make the actual CNN...
         '''
@@ -324,7 +324,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         ----------
         train_accuracies: A list of train accuracies at each 'epoch'.
         '''
-        self.MakeCNN()
+        self.MakeCNN(True)
         self.train_accuracies = []
         self.loss_function = []
         self.val_accuracies = []
