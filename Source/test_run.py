@@ -5,8 +5,6 @@ import warnings
 warnings.filterwarnings('ignore')
 from dog_images import DogImages
 from image_classifier import ImageClassifier
-from sklearn.model_selection import GridSearchCV
-
 
 def main():
     picsize = 128
@@ -23,49 +21,56 @@ def main():
     Xtrain = train_imgs[0]
     Ytrain = train_imgs[1]
 
-    Xtrain, Ytrain = shuffle_function(Xtest, Ytest)
-    Xtest, Ytest = shuffle_function(Xtest, Ytest)
+    for N, dogs in enumerate(lst_dogs):
+        best_score = 0
+        dog = dogs[dogs.index('-')+1:]
+        classes = [dog, 'Not-'+dog]
+        for i in range(5):
+            # free up some memory...
+            tf.reset_default_graph()
+            Xtrain, Ytrain = shuffle_function(Xtest, Ytest)
+            Xtest, Ytest = shuffle_function(Xtest, Ytest)
 
-    N = 16
-    # need 0:1 to get 0... it's a weird numpy thing
-    # so for lst_dogs[N], go Yt...[:, N:N + 1]
-    Ytrain_1 = np.zeros((Ytrain.shape[0],2))
-    Ytest_1 = np.zeros((Ytest.shape[0],2))
+            Ytrain_1 = np.zeros((Ytrain.shape[0],2))
+            Ytest_1 = np.zeros((Ytest.shape[0],2))
 
-    Ytrain_1[Ytrain[:,N]==1] = [1, 0]
-    Ytrain_1[Ytrain[:,N]==0] = [0, 1]
+            Ytrain_1[Ytrain[:,N]==1] = [1, 0]
+            Ytrain_1[Ytrain[:,N]==0] = [0, 1]
 
-    Ytest_1[Ytest[:,N]==1] = [1, 0]
-    Ytest_1[Ytest[:,N]==0] = [0, 1]
+            Ytest_1[Ytest[:,N]==1] = [1, 0]
+            Ytest_1[Ytest[:,N]==0] = [0, 1]
 
-    Ytrain_a = Ytrain_1[Ytrain_1[:,0] == 1]
-    Xtrain_a = Xtrain[Ytrain_1[:,0] == 1]
-    Ytrain_b = Ytrain_1[Ytrain_1[:,0] == 0][:3*Ytrain_a.shape[0]]
-    Xtrain_b = Xtrain[Ytrain_1[:,0] == 0][:3*Ytrain_a.shape[0]]
+            Ytrain_a = Ytrain_1[Ytrain_1[:,0] == 1]
+            Xtrain_a = Xtrain[Ytrain_1[:,0] == 1]
+            Ytrain_b = Ytrain_1[Ytrain_1[:,0] == 0][:3*Ytrain_a.shape[0]]
+            Xtrain_b = Xtrain[Ytrain_1[:,0] == 0][:3*Ytrain_a.shape[0]]
 
-    Ytrain_run = np.concatenate((Ytrain_a, Ytrain_b))
-    Xtrain_run = np.concatenate((Xtrain_a, Xtrain_b))
+            Ytrain_run = np.concatenate((Ytrain_a, Ytrain_b))
+            Xtrain_run = np.concatenate((Xtrain_a, Xtrain_b))
 
-    lst_dogs_1 = [lst_dogs[N], 'None']
-
-    model = ImageClassifier(picsize, lst_dogs_1,
-                                 out_channels = 12,
+            model = ImageClassifier(picsize, classes,
+                                out_channels = 12,
                                  out_channels_2 = 24,
-                                 hidden_units = 50,
-                                 regularization_strength = 0.5,
-                                 batch_size = 50,
+                                 hidden_units = 100,
+                                 regularization_strength = 1.0,
+                                 batch_size = 100,
                                  learning_rate = 0.0001,
                                  convolution_size = 5,
                                  pool_size = 2,
                                  training_epochs = 100,
                                  loss_threshold = 0.01,
-                                 verbose=True,
-                                 grid_search=True)
+                                 verbose=True)
+            model.fit(Xtrain_run, Ytrain_run)
+            plot_learning(model)
+            score = model.score(Xtest, Ytest_1)
 
-    model.fit(Xtrain_run, Ytrain_run)
-    score = model.score(Xtest, Ytest_1)
-    print(score)
-
+            if score > best_score:
+                model.save_('models/' + dog + '.pickle')
+            model.sess.close()
+            tf.reset_default_graph()
+            del model
+            print('\rPercent Complete: {:.4f}%'
+                    .format((i + 5*N)/(120.0*5)))
 
 def shuffle_function(X, y):
     Xhold = X.copy()
