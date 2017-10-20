@@ -61,7 +61,6 @@ def main():
                                  loss_threshold = 0.01,
                                  verbose=False)
             model.fit(Xtrain_run, Ytrain_run)
-            plot_learning(model)
             score = model.score(Xtest, Ytest_1)
 
             if score > best_score:
