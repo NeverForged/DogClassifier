@@ -490,7 +490,8 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         d['train_accuracies'] = self.train_accuracies
         d['val_accuracies'] = self.val_accuracies
         d['loss_function'] = self.loss_function
-        with open(self.save_file) as handle:
+
+        with open(self.save_file, 'wb') as handle:
             pickle.dump(sentences, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 if __name__ == '__main__':
