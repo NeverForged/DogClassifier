@@ -492,7 +492,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         d['loss_function'] = self.loss_function
 
         with open(self.save_file, 'wb') as handle:
-            pickle.dump(sentences, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(d, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 if __name__ == '__main__':
     picsize = 100
