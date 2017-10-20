@@ -59,7 +59,7 @@ def main():
                                  pool_size = 2,
                                  training_epochs = 100,
                                  loss_threshold = 0.01,
-                                 verbose=True)
+                                 verbose=False)
             model.fit(Xtrain_run, Ytrain_run)
             plot_learning(model)
             score = model.score(Xtest, Ytest_1)
