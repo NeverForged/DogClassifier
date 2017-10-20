@@ -446,7 +446,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 self.sess.close()
             return score
         except:
-            self.MakeCNN(fitting_this=False)
+            self.MakeCNN(False)
             score = self.accuracy.eval(feed_dict={self.x:X, self.y:y})
             if self.grid_search:
                 self.sess.close()
