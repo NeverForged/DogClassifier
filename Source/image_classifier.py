@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+import pickle as pickle
 # import matplotlib.pyplot as plt
 from sklearn.base import BaseEstimator, ClassifierMixin
 
@@ -71,41 +72,72 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                  regularization_strength=1.0, batch_size=99,
                  learning_rate=0.001, pool_size=2, verbose=False, W1=None,
                  b1=None, W2=None, b2=None, Wf=None, bf=None, Wf2=None,
-                 bf2=None, loss_threshold=0.001):
+                 bf2=None, loss_threshold=0.001,
+                 save_file='../models/model.pickle'):
         '''
         Initializer.
         '''
-        self.picsize = int(picsize)
-        self.classes = classes
-        self.convolution_size = int(convolution_size)
-        self.training_epochs = int(training_epochs)
-        self.out_channels = int(out_channels)
-        self.out_channels_2 = int(out_channels_2)
-        self.hidden_units = int(hidden_units)
-        self.regularization_strength = float(regularization_strength)
-        self.batch_size = batch_size
-        self.learning_rate = float(learning_rate)
-        self.pool_size = int(pool_size)
-        self.verbose = verbose
-        self.grid_search = grid_search
-        self.W1 = W1
-        self.b1 = b1
-        self.W2 = W2
-        self.b2 = b2
-        self.Wf = Wf
-        self.Wf2 = Wf2
-        self.bf = bf
-        self.bf2 = bf2
-        if init == 'he':
-            self.init_factor = 2.0
-        elif init == 'x':
-            self.init_factor = 1.0
-        else:
-            try:
-                self.init_factor = float(init)
-            except:
+        self.save_file = save_file
+        try:
+            d = pickle.load(open(save_file, "rb"))
+            self.picsize = d['picsize']
+            self.classes = d['classes']
+            self.convolution_size = int(d['convolution_size'])
+            self.training_epochs = int(d['training_epochs'])
+            self.out_channels = int(d['out_channels'])
+            self.out_channels_2 = int(d['out_channels_2'])
+            self.hidden_units = int(d['hidden_units'])
+            self.regularization_strength = float(d['regularization_strength'])
+            self.batch_size = d['batch_size']
+            self.learning_rate = float(d['learning_rate'])
+            self.pool_size = int(d['pool_size'])
+            self.verbose = d['verbose']
+            self.grid_search = d['grid_search']
+            self.W1 = d['W1']
+            self.b1 = d['b1']
+            self.W2 = d['W2']
+            self.b2 = d['b2']
+            self.Wf = d['Wf']
+            self.Wf2 = d['Wf2']
+            self.bf = d['bf']
+            self.bf2 = d['bf2']
+            self.init_factor = d['init_factor']
+            self.loss_threshold = float(d['loss_threshold'])
+            self.train_accuracies = d['train_accuracies']
+            self.val_accuracies = d['val_accuracies']
+            self.loss_function = d['loss_function']
+        except:
+            self.picsize = int(picsize)
+            self.classes = classes
+            self.convolution_size = int(convolution_size)
+            self.training_epochs = int(training_epochs)
+            self.out_channels = int(out_channels)
+            self.out_channels_2 = int(out_channels_2)
+            self.hidden_units = int(hidden_units)
+            self.regularization_strength = float(regularization_strength)
+            self.batch_size = batch_size
+            self.learning_rate = float(learning_rate)
+            self.pool_size = int(pool_size)
+            self.verbose = verbose
+            self.grid_search = grid_search
+            self.W1 = W1
+            self.b1 = b1
+            self.W2 = W2
+            self.b2 = b2
+            self.Wf = Wf
+            self.Wf2 = Wf2
+            self.bf = bf
+            self.bf2 = bf2
+            if init == 'he':
                 self.init_factor = 2.0
-        self.loss_threshold = float(loss_threshold)
+            elif init == 'x':
+                self.init_factor = 1.0
+            else:
+                try:
+                    self.init_factor = float(init)
+                except:
+                    self.init_factor = 2.0
+            self.loss_threshold = float(loss_threshold)
 
     def MakeCNN(self):
         '''
@@ -424,33 +456,42 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
 
-    # def set_params(self, **parameters):
-    #     '''
-    #     Fix as per:
-    #     https://stackoverflow.com/questions/28124366/
-    #     can-gridsearchcv-be-used-with-a-custom-classifier
-    #     '''
-    #     for parameter, value in parameters.items():
-    #         setattr(self, parameter, value)
-    #     return self
+    def save_(self):
+        '''
+        Saves all the relevant things in a pickle file for later retrieval.
 
-    # def plot_learning(self):
-    #     plt.plot(list(range(len(self.loss_function))),
-    #              self.loss_function, color='y', label='Loss/Max Loss')
-    #     plt.plot(list(range(len(self.train_accuracies))),
-    #              (1/len(self.classes))*np.ones(len(self.train_accuracies)),
-    #              linestyle='-', label='chance')
-    #     plt.plot(list(range(len(self.train_accuracies))),
-    #              self.train_accuracies, color='r', label='Training')
-    #     plt.plot(list(range(len(self.val_accuracies))),
-    #              self.val_accuracies, color='b', label='Validation')
-    #     plt.ylabel('Probability')
-    #     plt.xlabel('Epochs')
-    #     plt.title('Accuracy & Loss')
-    #     plt.ylim(ymax=1)
-    #     plt.ylim(ymin=0)
-    #     plt.legend()
-    #     return plt
+        tf.train.Saver() failed for some reason, and I have non-tf things to
+        save anyhow.
+        '''
+        d = {}
+        d['picsize'] = self.picsize
+        d['classes'] = self.classes
+        d['convolution_size'] = self.convolution_size
+        d['training_epochs'] = self.training_epochs
+        d['out_channels'] = self.out_channels
+        d['out_channels_2'] = self.out_channels_2
+        d['hidden_units']  = self.hidden_units
+        d['regularization_strength'] = self.regularization_strength
+        d['batch_size'] = self.batch_size
+        d['learning_rate']  = self.learning_rate
+        d['pool_size'] = self.pool_size
+        d['verbose'] = self.verbose
+        d['grid_search'] = False
+        d['W1'] = self.W1_best
+        d['b1'] = self.b1_best
+        d['W2'] = self.W2_best
+        d['b2'] = self.b2_best
+        d['Wf'] = self.Wf_best
+        d['Wf2'] = self.Wf2_best
+        d['bf'] = self.bf_best
+        d['bf2'] = self.bf2_best
+        d['init_factor'] = self.init_factor
+        d['loss_threshold'] = self.loss_threshold
+        d['train_accuracies'] = self.train_accuracies
+        d['val_accuracies'] = self.val_accuracies
+        d['loss_function'] = self.loss_function
+        with open(self.save_file) as handle:
+            pickle.dump(sentences, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 if __name__ == '__main__':
     picsize = 100
