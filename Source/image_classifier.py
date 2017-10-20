@@ -139,7 +139,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                     self.init_factor = 2.0
             self.loss_threshold = float(loss_threshold)
 
-    def MakeCNN(self):
+    def MakeCNN(self, fitting_this=True):
         '''
         Make the actual CNN...
         '''
@@ -299,15 +299,16 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.accuracy = tf.reduce_mean(tf.cast(self.correct_prediction,
                                                tf.float32))
 
-        # Training...
-        # ADAM is a sophisticated version of gradient descent that adapts the
-        # learning rate over time.
-        self.train_step = (tf.train.AdamOptimizer(self.learning_rate)
-                            .minimize(self.total_loss))
+        if fitting_this:
+            # Training...
+            # ADAM is a sophisticated version of gradient descent that adapts the
+            # learning rate over time.
+            self.train_step = (tf.train.AdamOptimizer(self.learning_rate)
+                                .minimize(self.total_loss))
 
-        # Set up the session...
-        self.sess = tf.InteractiveSession()
-        self.sess.run(tf.global_variables_initializer())
+            # Set up the session...
+            self.sess = tf.InteractiveSession()
+            self.sess.run(tf.global_variables_initializer())
 
     def fit(self, X, y):
         '''
@@ -438,10 +439,17 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         -----------
 
         '''
-        score = self.accuracy.eval(feed_dict={self.x:X, self.y:y})
-        if self.grid_search:
-            self.sess.close()
-        return score
+        try:
+            score = self.accuracy.eval(feed_dict={self.x:X, self.y:y})
+            if self.grid_search:
+                self.sess.close()
+            return score
+        except:
+            self.MakeCNN()
+            score = self.accuracy.eval(feed_dict={self.x:X, self.y:y})
+            if self.grid_search:
+                self.sess.close()
+            return score
 
     def predict(self, X, y=None):
         '''
