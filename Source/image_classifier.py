@@ -148,14 +148,14 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         # ---------- Convolutional layer 1 ----------
         # third number = channels, so 3
         try:
-            self.W1 = tf.constant(self.W1)
+            self.W1 = tf.get_variable('W1', init=tf.constant(self.W1))
         except:
             self.W1 = tf.Variable(self.initializer([self.convolution_size,
                                                     self.convolution_size, 3,
                                                     self.out_channels]),
                                   name='W1')
         try:
-            self.b1 = tf.constant(self.b1)
+            self.b1 = tf.get_variable('b1', init=tf.constant(self.b1))
         except:
             self.b1 = tf.Variable(self.initializer([self.out_channels]),
                                   name='b1')
@@ -197,7 +197,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
 
         # ---------- Convolutional layer  2 ----------
         try:
-            self.W2 = tf.Variable(self.W2)
+            self.W2 = tf.get_variable('W2', init=tf.constant(self.W2))
         except:
             self.W2 = tf.Variable(self.initializer([self.convolution_size,
                                                     self.convolution_size,
@@ -205,7 +205,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                                                     self.out_channels_2]),
                                                     name='w2')
         try:
-            self.b2 = tf.constant(self.b2)
+            self.b2 = tf.get_variable('b2', init=tf.constant(self.b2))
         except:
             self.b2 = tf.Variable(self.initializer([self.out_channels_2]),
                                   name='b2')
@@ -228,7 +228,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
 
         # ---------- Fully Connected layer ----------
         try:
-            self.Wf = tf.Variable(self.Wf)
+            self.Wf = tf.get_variable('Wf', init=tf.constant(self.Wf))
         except:
             self.Wf = tf.Variable(self.initializer([int(self.picsize**2 *
                                                    1/(self.pool_size**4) *
@@ -237,7 +237,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                                                    name = 'Wf')
 
         try:
-            self.bf = tf.constant(self.bf)
+            self.bf = tf.get_variable('bf', init=tf.constant(self.bf))
         except:
             self.bf = tf.Variable(self.initializer([self.hidden_units]),
                                   name = 'bf')
@@ -257,13 +257,13 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
 
         # ---------- The Output Layer ----------
         try:
-            self.Wf2 = tf.Variable(self.Wf2)
+            self.Wf2 = tf.get_variable('Wf2', init=tf.constant(self.Wf2))
         except:
             self.Wf2 = tf.Variable(self.initializer([self.hidden_units,
                                                      len(self.classes)]),
                                                     name = 'Wf2')
         try:
-            self.bf2 = tf.constant(self.bf2)
+            self.bf2 = tf.get_variable('bf2', init=tf.constant(self.bf2))
         except:
             self.bf2 = tf.Variable(self.initializer([len(self.classes)]),
                                    name = 'bf2')
