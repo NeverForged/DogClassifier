@@ -76,7 +76,6 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         Initializer.
         '''
-        self.save_file = save_file
         try:
             d = pickle.load(open(load_file, "rb"))
             self.picsize = d['picsize']
