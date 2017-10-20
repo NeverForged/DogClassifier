@@ -228,7 +228,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
 
         # ---------- Fully Connected layer ----------
         try:
-            self.Wf = tf.constant(self.Wf)
+            self.Wf = tf.Variable(self.Wf)
         except:
             self.Wf = tf.Variable(self.initializer([int(self.picsize**2 *
                                                    1/(self.pool_size**4) *
@@ -257,7 +257,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
 
         # ---------- The Output Layer ----------
         try:
-            self.Wf2 = tf.constant(self.Wf2)
+            self.Wf2 = tf.Variable(self.Wf2)
         except:
             self.Wf2 = tf.Variable(self.initializer([self.hidden_units,
                                                      len(self.classes)]),
@@ -300,16 +300,12 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                                                tf.float32))
 
 
-            # Training...
-            # ADAM is a sophisticated version of gradient descent that adapts the
-            # learning rate over time.
-        try:
-            print(fitting_this)
-            if fitting_this == True:
-                self.train_step = (tf.train.AdamOptimizer(self.learning_rate)
+        # Training...
+        # ADAM is a sophisticated version of gradient descent that adapts the
+        # learning rate over time.
+        self.train_step = (tf.train.AdamOptimizer(self.learning_rate)
                                     .minimize(self.total_loss))
-        except:
-            print('...loaded')
+
 
         # Set up the session...
         self.sess = tf.InteractiveSession()
