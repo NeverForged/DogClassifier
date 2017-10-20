@@ -473,6 +473,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         tf.train.Saver() failed for some reason, and I have non-tf things to
         save anyhow.
         '''
+        self.save_file = save_file
         d = {}
         d['picsize'] = self.picsize
         d['classes'] = self.classes
