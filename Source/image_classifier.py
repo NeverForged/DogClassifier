@@ -299,16 +299,17 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         self.accuracy = tf.reduce_mean(tf.cast(self.correct_prediction,
                                                tf.float32))
 
-        if fitting_this:
+
             # Training...
             # ADAM is a sophisticated version of gradient descent that adapts the
             # learning rate over time.
+        if fitting_this == True:
             self.train_step = (tf.train.AdamOptimizer(self.learning_rate)
                                 .minimize(self.total_loss))
 
-            # Set up the session...
-            self.sess = tf.InteractiveSession()
-            self.sess.run(tf.global_variables_initializer())
+        # Set up the session...
+        self.sess = tf.InteractiveSession()
+        self.sess.run(tf.global_variables_initializer())
 
     def fit(self, X, y):
         '''
@@ -445,7 +446,7 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
                 self.sess.close()
             return score
         except:
-            self.MakeCNN()
+            self.MakeCNN(fitting_this=False)
             score = self.accuracy.eval(feed_dict={self.x:X, self.y:y})
             if self.grid_search:
                 self.sess.close()
