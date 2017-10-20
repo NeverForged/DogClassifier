@@ -303,10 +303,12 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
             # Training...
             # ADAM is a sophisticated version of gradient descent that adapts the
             # learning rate over time.
-        if fitting_this == True:
+        try:
             self.train_step = (tf.train.AdamOptimizer(self.learning_rate)
                                 .minimize(self.total_loss))
-
+        except:
+            print('...loaded')
+            
         # Set up the session...
         self.sess = tf.InteractiveSession()
         self.sess.run(tf.global_variables_initializer())
