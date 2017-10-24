@@ -461,17 +461,26 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         Returns a prediction based on X
         '''
-        self.reset_()
-        return (tf.argmax(self.fully_connected_2_out, 1)
+
+        try:
+            return (tf.argmax(self.fully_connected_2_out, 1)
+                        .eval(feed_dict = {self.x:X}))
+        except:
+            self.reset_()
+            return (tf.argmax(self.fully_connected_2_out, 1)
                         .eval(feed_dict = {self.x:X}))
 
     def predict_proba(self, X, y=None):
         '''
         Returns a probability prediction based on X (log-odds)
         '''
-        self.reset_()
-        return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
-
+        try:
+            # self.reset_()
+            return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
+        except:
+            self.reset_()
+            return self.fully_connected_2_out.eval(feed_dict = {self.x:X})
+            
     def save_(self, save_file='models/model.pickle'):
         '''
         Saves all the relevant things in a pickle file for later retrieval.
