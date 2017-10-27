@@ -463,14 +463,13 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         try:
             # self.reset_()
-            return (1*(tf.argmax(self.fully_connected_2_out,1)
+            return tf.argmax(self.fully_connected_2_out,1)
                                 .eval(feed_dict = {self.x:X})
-                                == 0))
+
         except:
             self.reset_()
-            return (1*(tf.argmax(self.fully_connected_2_out,1)
+            return tf.argmax(self.fully_connected_2_out,1)
                                 .eval(feed_dict = {self.x:X})
-                                == 0))
 
     def predict_proba(self, X, y=None):
         '''
