@@ -461,10 +461,14 @@ class ImageClassifier(BaseEstimator, ClassifierMixin):
         '''
         Returns a prediction based on X
         '''
-
-
-        return (tf.argmax(self.fully_connected_2_out, 1)
-                        .eval(feed_dict = {self.x:X}))
+        try:
+            # self.reset_()
+            return (1*(self.fully_connected_2_out.eval(feed_dict = {self.x:X})
+                        == 0)
+        except:
+            self.reset_()
+            return (1*(self.fully_connected_2_out.eval(feed_dict = {self.x:X})
+                        == 0)
 
     def predict_proba(self, X, y=None):
         '''
