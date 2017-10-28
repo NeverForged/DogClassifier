@@ -34,11 +34,11 @@ def main():
             Ytrain_1 = np.zeros((Ytrain.shape[0],2))
             Ytest_1 = np.zeros((Ytest.shape[0],2))
 
-            Ytrain_1[Ytrain[:,N]==1] = [1, 0]
-            Ytrain_1[Ytrain[:,N]==0] = [0, 1]
+            Ytrain_1[Ytrain[:,N]==1] = [0, 1]
+            Ytrain_1[Ytrain[:,N]==0] = [1, 0]
 
-            Ytest_1[Ytest[:,N]==1] = [1, 0]
-            Ytest_1[Ytest[:,N]==0] = [0, 1]
+            Ytest_1[Ytest[:,N]==1] = [0, 1]
+            Ytest_1[Ytest[:,N]==0] = [1, 0]
 
             Ytrain_a = Ytrain_1[Ytrain_1[:,0] == 1]
             Xtrain_a = Xtrain[Ytrain_1[:,0] == 1]
