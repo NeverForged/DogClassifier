@@ -63,7 +63,7 @@ def main():
             model.fit(Xtrain_run, Ytrain_run)
             score = model.score(Xtest, Ytest_1)
 
-            if score > best_score && score < 1.0:
+            if score > best_score and score < 1.0:
                 model.save_('models/' + dog + '.pickle')
             model.sess.close()
             tf.reset_default_graph()
