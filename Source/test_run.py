@@ -54,7 +54,7 @@ def main():
                                  hidden_units = 100,
                                  regularization_strength = 1.0,
                                  batch_size = 100,
-                                 learning_rate = 0.0001,
+                                 learning_rate = 0.001,
                                  convolution_size = 5,
                                  pool_size = 2,
                                  training_epochs = 100,
@@ -63,7 +63,7 @@ def main():
             model.fit(Xtrain_run, Ytrain_run)
             score = model.score(Xtest, Ytest_1)
 
-            if score > best_score:
+            if score > best_score && score < 1.0:
                 model.save_('models/' + dog + '.pickle')
             model.sess.close()
             tf.reset_default_graph()
