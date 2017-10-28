@@ -42,8 +42,8 @@ def main():
 
             Ytrain_a = Ytrain_1[Ytrain_1[:,0] == 1]
             Xtrain_a = Xtrain[Ytrain_1[:,0] == 1]
-            Ytrain_b = Ytrain_1[Ytrain_1[:,0] == 0][:2*Ytrain_a.shape[0]]
-            Xtrain_b = Xtrain[Ytrain_1[:,0] == 0][:2*Ytrain_a.shape[0]]
+            Ytrain_b = Ytrain_1[Ytrain_1[:,0] == 0][:int(1.5*Ytrain_a.shape[0])]
+            Xtrain_b = Xtrain[Ytrain_1[:,0] == 0][:int(1.5*Ytrain_a.shape[0])]
 
             Ytrain_run = np.concatenate((Ytrain_a, Ytrain_b))
             Xtrain_run = np.concatenate((Xtrain_a, Xtrain_b))
