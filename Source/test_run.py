@@ -59,7 +59,7 @@ def main():
                                  pool_size = 2,
                                  training_epochs = 100,
                                  loss_threshold = 0.01,
-                                 verbose=False)
+                                 verbose=True)
             model.fit(Xtrain_run, Ytrain_run)
             score = model.score(Xtest, Ytest_1)
 
@@ -68,7 +68,8 @@ def main():
             model.sess.close()
             tf.reset_default_graph()
             del model
-            print('\rPercent Complete: {:.4f}%'
+            print()
+            print('\rOverall Percent Complete: {:.4f}%'
                     .format((i + 5*N)/(120.0*5)))
 
 def shuffle_function(X, y):
