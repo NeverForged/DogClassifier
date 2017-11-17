@@ -41,3 +41,15 @@ Now to create a convoluted neural network.  Setting it up to use variables, so I
 ![Convolutional Neural Network](Source/WebImages/fully_connected_cnn.png)
 
 Of course, now I have to grid-search the variables.
+
+## Results & Change of Focus
+Okay, so making my own model got me just over 3% Accuracy.  This isn't great, but isn't the worst either, considering [this paper's results on the same data](http://cs231n.stanford.edu/reports/2015/pdfs/fcdh_FinalReport.pdf).  So I had two ideas:
+* Instead of 1 model, do 120 binary classifications, then use other machine learning tools to sort this
+* Switch to a pre-made model
+
+The first idea led to over a week of processing, and also reminds me too much of a Kaggle competition - just string together 100s of models (in my case, literally 121 models) and see what happens.  This may work, but is hardly an effective method for doing so.  I was also mainly making my own tensorflow model based on a job interview I was prepping for... that never came.  I had e-mailed them about it, and never got a response.
+
+So, since I now have no reason to stick to only Tensorflow (passive-aggressive 'professionalism' is certainly my new favorite thing), and since I am still working on [a project for the UNHCR](https://github.com/NeverForged/HiveImageProject), it seems more to my best interest, and the progress of the project, to switch gears in that direction.  So I am.
+
+## Keras - VGG16
+Choosing Keras' VGG16 as the model I'll use to test this.  Now that I have a through understanding of the trials and tribulations of making my own model, time to try this on "easy mode".  So, I will pop-off the 1000 answer layer and replace with a 120-breed layer, up my dog photos to 224 by 224, and try again.
