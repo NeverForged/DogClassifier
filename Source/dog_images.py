@@ -11,7 +11,7 @@ class DogImages(object):
     with the characters split into teset and training sets.
     '''
 
-    def __init__(self, dognames, picsize, root='../Data'):
+    def __init__(self, dognames, picsize, root='../Data', flatten=True):
         '''Create an object of the class.
         Parameters:
         ----------
@@ -113,7 +113,10 @@ class DogImages(object):
         i = 0
         for yi, dogname in enumerate(self.dognames):
             for imagename in imagedict[dogname]:
-                ximages[i,:] = np.array(Image.open(imagename)).reshape((-1,))
+                if self.flatten:
+                    ximages[i,:] = np.array(Image.open(imagename)).reshape((-1,))
+                else:
+                    ximages[i,:] = np.array(Image.open(imagename))
                 yimages[i,yi] = 1
                 i += 1
         return ximages, yimages
