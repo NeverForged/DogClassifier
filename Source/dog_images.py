@@ -112,7 +112,10 @@ class DogImages(object):
         n = sum([len(imagedict[dogname]) for dogname in self.dognames])
         p = self.imagesize * self.imagesize * 3
         f = len(self.dognames)
-        ximages = np.zeros((n,p))
+        if self.flatten:
+            ximages = np.zeros((n,p))
+        else:
+            ximages = np.zeros((n,self.imagesize,self.imagesize,3))
         yimages = np.zeros((n,f))
         i = 0
         for yi, dogname in enumerate(self.dognames):
