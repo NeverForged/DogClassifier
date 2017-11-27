@@ -24,7 +24,10 @@ class DogImages(object):
         self.imagesize = picsize
         self.counter = 0
         self.tt_split = 0.3
-        self.flatten = flatten
+        if flatten:
+            self.flatten = True
+        else:
+            self.flatten = False
 
     def _make_img(self, dimg, directory):
             width, height = dimg.size
