@@ -67,7 +67,7 @@ def main():
             best = new
             print('SGD Best = {:.2f}%'.format(best*100.0))
             with open('SGD_version.pickle', 'wb') as handle:
-                pickle.dump(d, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(model, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
     ### ADAM
